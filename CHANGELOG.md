@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.1.0
+
+### Minor Changes
+
+- 2f13052: inline customization for react and astro presets, 120 max line length, misc formatting tweaks
+
 ## 1.0.0
 
 ### Major Changes
