@@ -1,0 +1,31 @@
+---
+import Card from '../components/Card.astro';
+import { Counter } from '../components/Counter';
+import '../styles/index.css';
+
+const items = [
+  { title: 'First', body: 'This is the first card.' },
+  { title: 'Second', body: 'This is the second card.' },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Demo</title>
+  </head>
+
+  <body class="bg-gray-50">
+    <main class="mx-auto max-w-2xl space-y-4 p-8">
+      {
+        items.map(item => (
+          <Card title={item.title}>
+            <p>{item.body}</p>
+          </Card>
+        ))
+      }
+
+      <Counter client:load initial={5} />
+    </main>
+  </body>
+</html>

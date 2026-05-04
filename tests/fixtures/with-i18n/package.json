@@ -1,0 +1,7 @@
+{
+  "name": "fixture-with-i18n",
+  "private": true,
+  "dependencies": {
+    "@astroscope/i18n": "^0.4.5"
+  }
+}

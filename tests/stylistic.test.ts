@@ -1,0 +1,70 @@
+import { describe, expect, it } from 'vitest';
+
+import { stylistic } from '../src/presets/stylistic.js';
+import { lint, ruleIds } from './helpers/lint.js';
+
+describe('stylistic preset', () => {
+  it('flags double quotes (single-quote rule)', () => {
+    const messages = lint('const x = "double";', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/quotes');
+  });
+
+  it('flags missing semicolons', () => {
+    const messages = lint('const x = 1', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/semi');
+  });
+
+  it('flags missing trailing comma in multiline', () => {
+    const code = [
+      'const obj = {',
+      '  a: 1,',
+      '  b: 2',
+      '};',
+    ].join('\n');
+    const messages = lint(code, stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/comma-dangle');
+  });
+
+  it('flags stroustrup brace style (we enforce 1tbs)', () => {
+    const code = [
+      'if (true) {',
+      '  doIt();',
+      '}',
+      'else {',
+      '  skip();',
+      '}',
+    ].join('\n');
+    const messages = lint(code, stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/brace-style');
+  });
+
+  it('strips parens from single-arg arrow expression body (arrow-parens: as-needed)', () => {
+    const messages = lint('const f = (x) => x + 1;', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/arrow-parens');
+  });
+
+  it('does NOT flag single-arg arrow without parens', () => {
+    const messages = lint('const f = x => x + 1;', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).not.toContain('@stylistic/arrow-parens');
+  });
+
+  it('requires parens for block-body arrow (requireForBlockBody)', () => {
+    const messages = lint('const f = x => { return x + 1; };', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/arrow-parens');
+  });
+
+  it('keeps = at end of line, not on next line (operator-linebreak: after)', () => {
+    const code = [
+      'const x',
+      '  = 1 + 2;',
+    ].join('\n');
+    const messages = lint(code, stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/operator-linebreak');
+  });
+
+  it('disables jsx-one-expression-per-line', () => {
+    const code = 'const x = <button>Count: {n}</button>;';
+    const messages = lint(code, stylistic(), 'a.tsx');
+    expect(ruleIds(messages)).not.toContain('@stylistic/jsx-one-expression-per-line');
+  });
+});

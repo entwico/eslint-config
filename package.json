@@ -1,0 +1,85 @@
+{
+  "name": "@entwico/eslint-config",
+  "version": "0.0.0",
+  "description": "Shared ESLint flat config for Entwico projects (TS, React, Astro, Tailwind, Astroscope)",
+  "type": "module",
+  "packageManager": "pnpm@10.33.2",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/entwico/eslint-config"
+  },
+  "bugs": {
+    "url": "https://github.com/entwico/eslint-config/issues"
+  },
+  "homepage": "https://github.com/entwico/eslint-config#readme",
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "flat-config",
+    "typescript",
+    "react",
+    "astro",
+    "tailwind",
+    "astroscope"
+  ],
+  "author": "admin@entwico.com",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate": "pnpm lint && pnpm typecheck && pnpm test",
+    "prepublishOnly": "pnpm build",
+    "ci:version": "changeset version && pnpm install --no-frozen-lockfile",
+    "ci:publish": "changeset publish"
+  },
+  "dependencies": {
+    "@astroscope/eslint-plugin": "^0.1.0",
+    "@astroscope/eslint-plugin-i18n": "^0.1.6",
+    "@eslint/js": "^9.27.0",
+    "@eslint/json": "^1.2.0",
+    "@stylistic/eslint-plugin": "^6.0.0-beta.4",
+    "@typescript-eslint/parser": "^8.59.1",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-better-tailwindcss": "^4.5.0",
+    "eslint-plugin-import-x": "^4.16.2",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "typescript-eslint": "^8.59.1"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0 || ^6.0.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@types/eslint": "^9.6.1",
+    "@types/node": "^25.6.0",
+    "eslint": "^9.27.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.5"
+  }
+}
