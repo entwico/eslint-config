@@ -38,19 +38,14 @@ describe('stylistic preset', () => {
     expect(ruleIds(messages)).toContain('@stylistic/brace-style');
   });
 
-  it('strips parens from single-arg arrow expression body (arrow-parens: as-needed)', () => {
-    const messages = lint('const f = (x) => x + 1;', stylistic(), 'a.ts');
-    expect(ruleIds(messages)).toContain('@stylistic/arrow-parens');
-  });
-
-  it('does NOT flag single-arg arrow without parens', () => {
+  it('requires parens around single-arg arrow (arrow-parens: always)', () => {
     const messages = lint('const f = x => x + 1;', stylistic(), 'a.ts');
-    expect(ruleIds(messages)).not.toContain('@stylistic/arrow-parens');
+    expect(ruleIds(messages)).toContain('@stylistic/arrow-parens');
   });
 
-  it('requires parens for block-body arrow (requireForBlockBody)', () => {
-    const messages = lint('const f = x => { return x + 1; };', stylistic(), 'a.ts');
-    expect(ruleIds(messages)).toContain('@stylistic/arrow-parens');
+  it('accepts single-arg arrow with parens', () => {
+    const messages = lint('const f = (x) => x + 1;', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).not.toContain('@stylistic/arrow-parens');
   });
 
   it('keeps = at end of line, not on next line (operator-linebreak: after)', () => {

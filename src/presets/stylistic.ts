@@ -4,35 +4,20 @@ import { JS_TS_FILES } from '../files.js';
 import type { FlatConfigArray } from '../types.js';
 
 export type StylisticOptions = {
-  /**
-   * Indentation size (spaces).
-   * @default 2
-   */
+  /** Indentation size in spaces. */
   indent?: number | undefined;
 
-  /**
-   * Quote style for strings.
-   * @default 'single'
-   */
+  /** Quote style. */
   quotes?: 'single' | 'double' | undefined;
 
-  /**
-   * Whether to require semicolons.
-   * @default true
-   */
+  /** Require semicolons. */
   semi?: boolean | undefined;
 
-  /**
-   * Trailing comma style.
-   * @default 'always-multiline'
-   */
+  /** Trailing comma policy. */
   commaDangle?: 'never' | 'always' | 'always-multiline' | 'only-multiline' | undefined;
 };
 
-/**
- * Formatting rules powered by @stylistic/eslint-plugin.
- * Replaces Prettier for JS/TS/JSX/TSX/Astro.
- */
+/** Formatting rules. */
 export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
   const {
     indent = 2,
@@ -48,7 +33,8 @@ export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
     commaDangle,
     jsx: true,
     braceStyle: '1tbs',
-    arrowParens: false,
+    arrowParens: true,
+    quoteProps: 'as-needed',
   });
 
   return [
@@ -56,20 +42,29 @@ export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
     {
       files: JS_TS_FILES,
       rules: {
-        // Prettier-compatible: '=' stays at end of line, ternary operators go to next line
         '@stylistic/operator-linebreak': [
           'error',
           'after',
-          { overrides: { '?': 'before', ':': 'before' } },
+          { overrides: { '?': 'before', ':': 'before', '|': 'before', '&': 'before' } },
         ],
-        // jsx-one-expression-per-line is overly strict (Prettier doesn't enforce it)
         '@stylistic/jsx-one-expression-per-line': 'off',
+        '@stylistic/multiline-ternary': 'off',
+        '@stylistic/max-len': [
+          'error',
+          {
+            code: 120,
+            tabWidth: 2,
+            ignoreUrls: true,
+            ignoreStrings: true,
+            ignoreTemplateLiterals: true,
+            ignoreRegExpLiterals: true,
+          },
+        ],
       },
     },
     {
       files: ['**/*.astro'],
       rules: {
-        // astro inline scripts use string concatenation
         'prefer-template': 'off',
       },
     },

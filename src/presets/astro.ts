@@ -6,29 +6,23 @@ import eslintPluginAstro from 'eslint-plugin-astro';
 import { JS_TS_FILES } from '../files.js';
 import type { FlatConfigArray } from '../types.js';
 
-export type AstroOptions = {
-  /**
-   * Enable i18n rules from @astroscope/eslint-plugin-i18n.
-   * @default false
-   */
-  i18n?: boolean | undefined;
+export type AstroI18nOptions = {
+  /** Attribute names added to the i18n no-raw-strings ignore list. */
+  ignoreAttributes?: string[] | undefined;
 };
 
-/**
- * Astro lint rules — bundles eslint-plugin-astro, jsx-a11y-strict for .astro files,
- * and @astroscope/eslint-plugin
- *
- * - eslint-plugin-astro recommended (with TS parser for frontmatter)
- * - jsx-a11y-strict for .astro files
- * - @astroscope/no-excess-jsx-props
- * - @astroscope/no-html-comments
- * - @astroscope/eslint-plugin-i18n rules when `i18n: true`
- */
+export type AstroOptions = {
+  /** Enable @astroscope/i18n rules. Pass an object to extend ignored attributes. */
+  i18n?: boolean | AstroI18nOptions | undefined;
+};
+
+/** Astro + @astroscope/eslint-plugin rules. */
 export function astro(options: AstroOptions = {}): FlatConfigArray {
   const { i18n = false } = options;
+  const i18nEnabled = i18n !== false;
+  const i18nIgnoreAttributes = typeof i18n === 'object' ? (i18n.ignoreAttributes ?? []) : [];
 
   const configs: FlatConfigArray = [
-    // astro rules with TypeScript parser for frontmatter
     ...eslintPluginAstro.configs.recommended.map((config) => {
       const languageOptions = config.languageOptions ?? {};
       const parserOptions =
@@ -48,10 +42,8 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
       };
     }),
 
-    // strict a11y on .astro files
     ...eslintPluginAstro.configs['jsx-a11y-strict'],
 
-    // astroscope core rules
     {
       files: JS_TS_FILES,
       plugins: { '@astroscope': astroscopePlugin as never },
@@ -62,7 +54,7 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
     },
   ];
 
-  if (i18n) {
+  if (i18nEnabled) {
     configs.push({
       files: JS_TS_FILES,
       plugins: { '@astroscope/i18n': i18nPlugin as never },
@@ -75,7 +67,7 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
         '@astroscope/i18n/prefer-x-directives': 'error',
         '@astroscope/i18n/no-raw-strings-in-jsx': [
           'warn',
-          { ignoreAttributes: [...DEFAULT_IGNORE_ATTRIBUTES] },
+          { ignoreAttributes: [...DEFAULT_IGNORE_ATTRIBUTES, ...i18nIgnoreAttributes] },
         ],
       },
     });

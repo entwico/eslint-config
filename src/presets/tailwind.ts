@@ -4,39 +4,23 @@ import { JS_TS_FILES } from '../files.js';
 import type { FlatConfigArray } from '../types.js';
 
 export type TailwindOptions = {
-  /**
-   * Path to the Tailwind CSS entry point file.
-   * @example 'src/styles/index.css'
-   */
+  /** Path to the Tailwind CSS entry file. */
   entryPoint: string;
 
-  /**
-   * Custom function names that accept Tailwind classes.
-   * @default ['cn', 'cva']
-   */
+  /** Functions that accept Tailwind class strings. */
   callees?: string[] | undefined;
 
-  /**
-   * Root font size for rem calculations.
-   * @default 16
-   */
+  /** Root font size for rem calculations. */
   rootFontSize?: number | undefined;
 
-  /**
-   * Attribute patterns to check for Tailwind classes.
-   * @default ['class', 'className', 'ngClass', 'class:list', '[A-Za-z]+ClassName']
-   */
+  /** Attribute patterns to check for class strings. */
   attributes?: string[] | undefined;
 
-  /**
-   * Classes to ignore from unknown class checks.
-   */
+  /** Class names to ignore in the unknown-class check. */
   ignoreClasses?: string[] | undefined;
 };
 
-/**
- * Tailwind CSS linting with eslint-plugin-better-tailwindcss.
- */
+/** Tailwind CSS linting via eslint-plugin-better-tailwindcss. */
 export function tailwind(options: TailwindOptions): FlatConfigArray {
   const {
     entryPoint,
@@ -46,7 +30,6 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
     ignoreClasses,
   } = options;
 
-  // spread the recommended config and merge with our settings
   const recommendedConfig = tailwindPlugin.configs.recommended as Record<string, unknown>;
 
   return [

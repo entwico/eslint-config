@@ -13,7 +13,7 @@ export const Counter: FunctionComponent<CounterProps> = ({ initial = 0, classNam
   return (
     <button
       type="button"
-      onClick={() => setCount(c => c + 1)}
+      onClick={() => setCount((c) => c + 1)}
       className={cn('rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700', className)}
     >
       Count: {count}

@@ -1,10 +1,7 @@
-// factory (recommended entry point)
 export { defineConfig, type DefineConfigOptions } from './define-config.js';
 
-// shared constants
-export { DEFAULT_IGNORES, JS_TS_FILES } from './files.js';
+export { JS_TS_FILES } from './files.js';
 
-// individual presets (escape hatches for advanced usage)
 export { astro, type AstroOptions } from './presets/astro.js';
 export { base, type BaseOptions } from './presets/base.js';
 export { imports, type ImportsOptions } from './presets/imports.js';

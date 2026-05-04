@@ -5,50 +5,28 @@ import { DEFAULT_IGNORES } from './files.js';
 import { astro } from './presets/astro.js';
 import { base } from './presets/base.js';
 import { imports } from './presets/imports.js';
-import { json } from './presets/json.js';
 import { react } from './presets/react.js';
 import { stylistic } from './presets/stylistic.js';
 import { tailwind } from './presets/tailwind.js';
 import type { FlatConfigArray } from './types.js';
 
 export type DefineConfigOptions = {
-  /**
-   * Path to the consumer's package root. Pass `import.meta.dirname` from
-   * your eslint.config.js. Used for tsconfigRootDir and package.json detection.
-   */
+  /** Pass `import.meta.dirname` from your eslint.config.js. */
   root: string;
 
-  /**
-   * Enable React rules (react, react-hooks, jsx-a11y).
-   * Auto-detects `vite` in deps to enable react-refresh.
-   * @default false
-   */
-  react?: boolean | undefined;
+  /** Enable React rules. Auto-detects `vite` for react-refresh. */
+  react?: boolean | { customEffectHooks?: string } | undefined;
 
-  /**
-   * Enable Astro rules (astro plugin + @astroscope/eslint-plugin).
-   * Auto-detects `@astroscope/i18n` in deps to enable i18n rules.
-   * @default false
-   */
-  astro?: boolean | undefined;
+  /** Enable Astro rules. Auto-detects `@astroscope/i18n` for i18n rules. */
+  astro?: boolean | { i18n?: boolean | { ignoreAttributes?: string[] } } | undefined;
 
-  /**
-   * Enable Tailwind rules. Requires `entryPoint` (path to your Tailwind CSS entry).
-   */
+  /** Enable Tailwind rules. */
   tailwind?: { entryPoint: string; ignoreClasses?: string[] } | undefined;
 
-  /**
-   * Global ignores. Defaults to `DEFAULT_IGNORES` when omitted.
-   * Pass an explicit array to replace the defaults — compose with `DEFAULT_IGNORES`
-   * if you want to extend them: `ignores: [...DEFAULT_IGNORES, 'public/*']`.
-   * Pass `[]` to apply no global ignores.
-   */
+  /** Additional global ignore patterns, merged with the package defaults. */
   ignores?: string[] | undefined;
 
-  /**
-   * Additional flat-config blocks appended at the end. Use for project-specific
-   * rule overrides, file-scoped configs, or any escape hatch.
-   */
+  /** Extra flat-config blocks appended last. */
   extra?: FlatConfigArray | undefined;
 };
 
@@ -68,14 +46,7 @@ function readPackageDeps(root: string): Set<string> {
   }
 }
 
-/**
- * Compose the @entwico/eslint-config flat config.
- *
- * Always-on internally: base, imports, stylistic, json.
- * Opt-in: react, astro, tailwind via the options.
- * Sub-features auto-detected from package.json: vite (→ react-refresh),
- * @astroscope/i18n (→ astroscope i18n rules).
- */
+/** Compose the flat config for an Entwico project. */
 export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
   const {
     root,
@@ -89,19 +60,18 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
   const deps = readPackageDeps(root);
   const configs: FlatConfigArray = [];
 
-  const finalIgnores = ignores ?? DEFAULT_IGNORES;
-  if (finalIgnores.length > 0) {
-    configs.push({ ignores: finalIgnores });
-  }
+  configs.push({ ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] });
 
   configs.push(...base({ root }));
 
   if (enableAstro) {
-    configs.push(...astro({ i18n: deps.has('@astroscope/i18n') }));
+    const astroOpts = typeof enableAstro === 'object' ? enableAstro : {};
+    configs.push(...astro({ i18n: deps.has('@astroscope/i18n'), ...astroOpts }));
   }
 
   if (enableReact) {
-    configs.push(...react({ vite: deps.has('vite') }));
+    const reactOpts = typeof enableReact === 'object' ? enableReact : {};
+    configs.push(...react({ vite: deps.has('vite'), ...reactOpts }));
   }
 
   if (tailwindOptions) {
@@ -110,7 +80,6 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
 
   configs.push(...imports());
   configs.push(...stylistic());
-  configs.push(...json());
 
   configs.push(...extra);
 

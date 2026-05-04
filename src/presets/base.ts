@@ -8,16 +8,11 @@ const TYPE_AWARE_FILES = ['**/*.{ts,tsx}'];
 const TYPE_AWARE_IGNORES = ['**/*.astro/**'];
 
 export type BaseOptions = {
-  /**
-   * Path to the consumer's package root. Pass `import.meta.dirname` from
-   * your eslint.config.js. Used for tsconfigRootDir and type-aware project lookup.
-   */
+  /** Pass `import.meta.dirname` from your eslint.config.js. */
   root: string;
 };
 
-/**
- * Base ESLint configuration with JS and TypeScript rules
- */
+/** JS + TypeScript rules including type-aware checks. */
 export function base({ root }: BaseOptions): FlatConfigArray {
   return [
     {
@@ -27,14 +22,12 @@ export function base({ root }: BaseOptions): FlatConfigArray {
       },
     },
 
-    // standard js rules
     { files: JS_TS_FILES, ...js.configs.recommended },
 
-    // override js rules (semantic only — formatting lives in the stylistic preset)
     {
       files: JS_TS_FILES,
       rules: {
-        'eqeqeq': ['error', 'always'],
+        eqeqeq: ['error', 'always'],
         'object-shorthand': 'error',
         'no-useless-concat': 'error',
         'prefer-template': 'error',
@@ -42,7 +35,7 @@ export function base({ root }: BaseOptions): FlatConfigArray {
           'error',
           {
             ignoreCase: false,
-            ignoreDeclarationSort: true, // let import/order handle declaration sorting
+            ignoreDeclarationSort: true,
             ignoreMemberSort: false,
             memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
             allowSeparatedGroups: false,
@@ -51,10 +44,8 @@ export function base({ root }: BaseOptions): FlatConfigArray {
       },
     },
 
-    // standard typescript rules
-    ...tseslint.configs.recommended.map(c => ({ files: JS_TS_FILES, ...c })),
+    ...tseslint.configs.recommended.map((c) => ({ files: JS_TS_FILES, ...c })),
 
-    // override typescript rules
     {
       files: JS_TS_FILES,
       rules: {
@@ -84,7 +75,6 @@ export function base({ root }: BaseOptions): FlatConfigArray {
       },
     },
 
-    // type-aware rules (always on)
     {
       files: TYPE_AWARE_FILES,
       ignores: TYPE_AWARE_IGNORES,

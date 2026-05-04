@@ -12,20 +12,11 @@ const COMMON_JSONC_FILES = [
 ];
 
 export type JsonOptions = {
-  /**
-   * Additional file patterns to treat as JSONC (JSON with comments + trailing commas)
-   * instead of strict JSON. Common JSONC files (tsconfig.json, .vscode/*.json, etc.)
-   * are auto-detected.
-   */
+  /** Additional file patterns to lint as JSONC instead of strict JSON. */
   jsoncFiles?: string[] | undefined;
 };
 
-/**
- * JSON / JSONC / JSON5 linting via @eslint/json.
- *
- * Rules: no-duplicate-keys, no-empty-keys, no-unnormalized-keys,
- *        no-unsafe-values, top-level-interop.
- */
+/** JSON / JSONC / JSON5 linting via @eslint/json. */
 export function json(options: JsonOptions = {}): FlatConfigArray {
   const jsoncFiles = [...COMMON_JSONC_FILES, ...(options.jsoncFiles ?? [])];
 

@@ -7,57 +7,42 @@ import globals from 'globals';
 import type { FlatConfigArray } from '../types.js';
 
 export type ReactOptions = {
-  /**
-   * File patterns to apply React rules to.
-   * @default ['**\/*.{js,mjs,cjs,ts,jsx,tsx}']
-   */
+  /** File patterns to apply React rules to. */
   files?: string[] | undefined;
 
-  /**
-   * Additional hooks for exhaustive-deps rule.
-   * @example 'useEffectAfterMount|useEffectOnce'
-   */
-  additionalHooks?: string | undefined;
+  /** Custom effect-like hooks (regex alternation), forwarded to react-hooks/exhaustive-deps. */
+  customEffectHooks?: string | undefined;
 
-  /**
-   * Enable react-refresh plugin for Vite projects.
-   * @default false
-   */
+  /** Enable react-refresh for Vite projects. */
   vite?: boolean | undefined;
 
-  /**
-   * Enable jsx-a11y strict mode.
-   * @default true
-   */
+  /** Enable jsx-a11y strict mode. */
   a11yStrict?: boolean | undefined;
 };
 
-/**
- * React, React Hooks, and JSX accessibility rules.
- */
+/** React, react-hooks, jsx-a11y rules. */
 export function react(options: ReactOptions = {}): FlatConfigArray {
-  const { files = ['**/*.{js,mjs,cjs,ts,jsx,tsx}'], additionalHooks, vite = false, a11yStrict = true } = options;
+  const { files = ['**/*.{js,mjs,cjs,ts,jsx,tsx}'], customEffectHooks, vite = false, a11yStrict = true } = options;
 
   const configs: FlatConfigArray = [
-    // react core rules
     {
-      files,
       plugins: {
-        'react': reactPlugin,
+        react: reactPlugin,
         'jsx-a11y': jsxA11y,
-      },
-      languageOptions: {
-        parserOptions: {
-          ecmaFeatures: {
-            jsx: true,
-          },
-        },
-        ...(vite ? { globals: globals.browser } : {}),
+        'react-hooks': reactHooksPlugin as never,
       },
       settings: {
-        react: {
-          version: 'detect',
+        react: { version: 'detect' },
+      },
+    },
+
+    {
+      files,
+      languageOptions: {
+        parserOptions: {
+          ecmaFeatures: { jsx: true },
         },
+        ...(vite ? { globals: globals.browser } : {}),
       },
       rules: {
         ...reactPlugin.configs.recommended.rules,
@@ -67,7 +52,6 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
       },
     },
 
-    // jsx-a11y rules
     {
       files,
       rules: {
@@ -75,14 +59,11 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
       },
     },
 
-    // react hooks rules
     {
-      plugins: {
-        'react-hooks': reactHooksPlugin as never,
-      },
+      files,
       rules: {
         ...reactHooksPlugin.configs.recommended.rules,
-        'react-hooks/exhaustive-deps': ['error', additionalHooks ? { additionalHooks } : {}],
+        'react-hooks/exhaustive-deps': ['error', customEffectHooks ? { additionalHooks: customEffectHooks } : {}],
         'react-hooks/set-state-in-effect': 'off',
         'react-hooks/refs': 'off',
         'react-hooks/incompatible-library': 'off',
@@ -91,17 +72,20 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
     },
   ];
 
-  // react-refresh for Vite
   if (vite) {
-    configs.push({
-      files,
-      plugins: {
-        'react-refresh': reactRefreshPlugin,
+    configs.push(
+      {
+        plugins: {
+          'react-refresh': reactRefreshPlugin,
+        },
       },
-      rules: {
-        'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      {
+        files,
+        rules: {
+          'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+        },
       },
-    });
+    );
   }
 
   return configs;

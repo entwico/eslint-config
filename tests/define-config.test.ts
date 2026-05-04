@@ -3,7 +3,6 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { defineConfig } from '../src/define-config.js';
-import { DEFAULT_IGNORES } from '../src/files.js';
 
 const FIXTURES = join(import.meta.dirname, 'fixtures');
 
@@ -21,20 +20,22 @@ describe('defineConfig', () => {
     expect(config.length).toBeGreaterThan(0);
   });
 
-  it('puts global ignores in their own config block', () => {
+  it('always merges DEFAULT_IGNORES with consumer ignores', () => {
     const config = defineConfig({
       root: join(FIXTURES, 'plain'),
       ignores: ['public/*'],
     });
     const ignoresBlock = config.find((c) => 'ignores' in c && Object.keys(c).length === 1);
-    expect(ignoresBlock).toBeDefined();
-    expect(ignoresBlock?.ignores).toEqual(['public/*']);
+    expect(ignoresBlock?.ignores).toContain('**/dist/**');
+    expect(ignoresBlock?.ignores).toContain('**/node_modules/**');
+    expect(ignoresBlock?.ignores).toContain('public/*');
   });
 
-  it('exposes DEFAULT_IGNORES with sensible entries', () => {
-    expect(DEFAULT_IGNORES).toContain('**/dist/**');
-    expect(DEFAULT_IGNORES).toContain('**/node_modules/**');
-    expect(DEFAULT_IGNORES).toContain('**/.astro/**');
+  it('applies DEFAULT_IGNORES even when ignores is omitted', () => {
+    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+    const ignoresBlock = config.find((c) => 'ignores' in c && Object.keys(c).length === 1);
+    expect(ignoresBlock?.ignores).toContain('**/dist/**');
+    expect(ignoresBlock?.ignores).toContain('**/.astro/**');
   });
 
   it('appends extra config blocks at the end', () => {
@@ -79,11 +80,15 @@ describe('defineConfig', () => {
     expect(configHasPlugin(config, '@astroscope/i18n')).toBe(false);
   });
 
-  it('always includes base, imports, stylistic, json plugins', () => {
+  it('always includes base, imports, stylistic plugins', () => {
     const config = defineConfig({ root: join(FIXTURES, 'plain') });
     expect(configHasPlugin(config, '@stylistic')).toBe(true);
     expect(configHasPlugin(config, 'import-x')).toBe(true);
-    expect(configHasPlugin(config, 'json')).toBe(true);
+  });
+
+  it('does not auto-enable json plugin', () => {
+    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+    expect(configHasPlugin(config, 'json')).toBe(false);
   });
 
   it('sets tsconfigRootDir to the consumer root', () => {
