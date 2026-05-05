@@ -41,4 +41,31 @@ describe('base preset', () => {
     const messages = lint('{ "name": "x" }', base({ root: ROOT }), 'package.json');
     expect(messages.filter((m) => m.fatal)).toHaveLength(0);
   });
+
+  it('uses projectService for type-aware rules by default', () => {
+    const config = base({ root: ROOT });
+    const typeAwareBlock = config.find((c) =>
+      Array.isArray(c.files) && c.files.includes('**/*.{ts,tsx}'),
+    );
+    const parserOptions = typeAwareBlock?.languageOptions?.parserOptions as
+      | { projectService?: boolean; project?: unknown }
+      | undefined;
+    expect(parserOptions?.projectService).toBe(true);
+    expect(parserOptions?.project).toBeUndefined();
+  });
+
+  it('uses an explicit project path when tsconfigProject is provided', () => {
+    const config = base({
+      root: ROOT,
+      tsconfigProject: ['./tsconfig.app.json', './tsconfig.node.json'],
+    });
+    const typeAwareBlock = config.find((c) =>
+      Array.isArray(c.files) && c.files.includes('**/*.{ts,tsx}'),
+    );
+    const parserOptions = typeAwareBlock?.languageOptions?.parserOptions as
+      | { projectService?: boolean; project?: unknown }
+      | undefined;
+    expect(parserOptions?.project).toEqual(['./tsconfig.app.json', './tsconfig.node.json']);
+    expect(parserOptions?.projectService).toBeUndefined();
+  });
 });

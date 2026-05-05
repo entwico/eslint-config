@@ -102,4 +102,23 @@ describe('defineConfig', () => {
     const parserOptions = block?.languageOptions?.parserOptions as { tsconfigRootDir?: string } | undefined;
     expect(parserOptions?.tsconfigRootDir).toBe(root);
   });
+
+  it('forwards tsconfigProject to the base preset', () => {
+    const root = join(FIXTURES, 'plain');
+    const config = defineConfig({
+      root,
+      tsconfigProject: ['./tsconfig.app.json', './tsconfig.node.json'],
+    });
+
+    const typeAwareBlock = config.find((c) => {
+      const opts = c.languageOptions?.parserOptions as { project?: unknown } | undefined;
+      return Array.isArray(opts?.project);
+    });
+
+    const parserOptions = typeAwareBlock?.languageOptions?.parserOptions as
+      | { project?: unknown; projectService?: unknown }
+      | undefined;
+    expect(parserOptions?.project).toEqual(['./tsconfig.app.json', './tsconfig.node.json']);
+    expect(parserOptions?.projectService).toBeUndefined();
+  });
 });

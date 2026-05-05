@@ -23,6 +23,9 @@ export type DefineConfigOptions = {
   /** Enable Tailwind rules. */
   tailwind?: { entryPoint: string; ignoreClasses?: string[] } | undefined;
 
+  /** Pin specific tsconfig paths. Defaults to `projectService: true`. */
+  tsconfigProject?: string | string[] | undefined;
+
   /** Additional global ignore patterns, merged with the package defaults. */
   ignores?: string[] | undefined;
 
@@ -53,6 +56,7 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
     react: enableReact = false,
     astro: enableAstro = false,
     tailwind: tailwindOptions,
+    tsconfigProject,
     ignores,
     extra = [],
   } = options;
@@ -62,7 +66,7 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
 
   configs.push({ ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] });
 
-  configs.push(...base({ root }));
+  configs.push(...base({ root, ...(tsconfigProject !== undefined ? { tsconfigProject } : {}) }));
 
   if (enableAstro) {
     const astroOpts = typeof enableAstro === 'object' ? enableAstro : {};

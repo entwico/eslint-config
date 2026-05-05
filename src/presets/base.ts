@@ -10,10 +10,18 @@ const TYPE_AWARE_IGNORES = ['**/*.astro/**'];
 export type BaseOptions = {
   /** Pass `import.meta.dirname` from your eslint.config.js. */
   root: string;
+
+  /** Pin specific tsconfig paths. Defaults to `projectService: true`. */
+  tsconfigProject?: string | string[] | undefined;
 };
 
 /** JS + TypeScript rules including type-aware checks. */
-export function base({ root }: BaseOptions): FlatConfigArray {
+export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
+  const typeAwareParserOptions =
+    tsconfigProject !== undefined
+      ? { project: tsconfigProject, tsconfigRootDir: root }
+      : { projectService: true, tsconfigRootDir: root };
+
   return [
     {
       files: JS_TS_FILES,
@@ -79,10 +87,7 @@ export function base({ root }: BaseOptions): FlatConfigArray {
       files: TYPE_AWARE_FILES,
       ignores: TYPE_AWARE_IGNORES,
       languageOptions: {
-        parserOptions: {
-          project: './tsconfig.json',
-          tsconfigRootDir: root,
-        },
+        parserOptions: typeAwareParserOptions,
       },
       rules: {
         '@typescript-eslint/await-thenable': 'error',
