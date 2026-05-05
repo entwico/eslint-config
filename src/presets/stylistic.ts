@@ -62,11 +62,5 @@ export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
         ],
       },
     },
-    {
-      files: ['**/*.astro'],
-      rules: {
-        'prefer-template': 'off',
-      },
-    },
   ];
 }
