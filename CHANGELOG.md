@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.1.1
+
+### Patch Changes
+
+- 082767e: enforce prefer-template in .astro files
+
 ## 1.1.0
 
 ### Minor Changes
