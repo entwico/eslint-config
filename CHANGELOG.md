@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.3.0
+
+### Minor Changes
+
+- 2530b7e: auto-detect React Compiler to turn on its eslint lints
+
 ## 1.2.0
 
 ### Minor Changes
