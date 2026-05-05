@@ -35,12 +35,12 @@ describe('react preset', () => {
     expect(ruleIds(messages)).toContain('react-hooks/exhaustive-deps');
   });
 
-  it('enables react-refresh when vite: true', () => {
+  it('enables react-refresh when reactRefresh: true', () => {
     const code = [
       'export const helper = (x) => x + 1;',
       'export const X = () => null;',
     ].join('\n');
-    const messages = lint(code, react({ vite: true }), 'a.tsx');
+    const messages = lint(code, react({ reactRefresh: true }), 'a.tsx');
     expect(ruleIds(messages)).toContain('react-refresh/only-export-components');
   });
 
@@ -51,5 +51,23 @@ describe('react preset', () => {
     ].join('\n');
     const messages = lint(code, react(), 'a.tsx');
     expect(ruleIds(messages)).not.toContain('react-refresh/only-export-components');
+  });
+
+  it('disables compiler-specific react-hooks rules by default', () => {
+    const configs = react();
+    const hooksBlock = configs.find((c) => c.rules != null && 'react-hooks/refs' in c.rules);
+    expect(hooksBlock?.rules?.['react-hooks/refs']).toBe('off');
+    expect(hooksBlock?.rules?.['react-hooks/incompatible-library']).toBe('off');
+    expect(hooksBlock?.rules?.['react-hooks/unsupported-syntax']).toBe('off');
+    expect(hooksBlock?.rules?.['react-hooks/set-state-in-effect']).toBe('off');
+  });
+
+  it('keeps compiler-specific react-hooks rules on when reactCompiler: true', () => {
+    const configs = react({ reactCompiler: true });
+    const hooksBlock = configs.find((c) => c.rules != null && 'react-hooks/exhaustive-deps' in c.rules);
+    expect(hooksBlock?.rules?.['react-hooks/refs']).not.toBe('off');
+    expect(hooksBlock?.rules?.['react-hooks/incompatible-library']).not.toBe('off');
+    expect(hooksBlock?.rules?.['react-hooks/unsupported-syntax']).not.toBe('off');
+    expect(hooksBlock?.rules?.['react-hooks/set-state-in-effect']).not.toBe('off');
   });
 });

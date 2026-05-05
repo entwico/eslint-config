@@ -13,16 +13,25 @@ export type ReactOptions = {
   /** Custom effect-like hooks (regex alternation), forwarded to react-hooks/exhaustive-deps. */
   customEffectHooks?: string | undefined;
 
-  /** Enable react-refresh for Vite projects. */
-  vite?: boolean | undefined;
+  /** Enable react-refresh rules (typically for Vite/HMR projects). */
+  reactRefresh?: boolean | undefined;
 
   /** Enable jsx-a11y strict mode. */
   a11yStrict?: boolean | undefined;
+
+  /** Project uses React Compiler — turn on the compiler-specific lints from eslint-plugin-react-hooks v7. */
+  reactCompiler?: boolean | undefined;
 };
 
 /** React, react-hooks, jsx-a11y rules. */
 export function react(options: ReactOptions = {}): FlatConfigArray {
-  const { files = ['**/*.{js,mjs,cjs,ts,jsx,tsx}'], customEffectHooks, vite = false, a11yStrict = true } = options;
+  const {
+    files = ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
+    customEffectHooks,
+    reactRefresh = false,
+    a11yStrict = true,
+    reactCompiler = false,
+  } = options;
 
   const configs: FlatConfigArray = [
     {
@@ -42,7 +51,7 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
         parserOptions: {
           ecmaFeatures: { jsx: true },
         },
-        ...(vite ? { globals: globals.browser } : {}),
+        ...(reactRefresh ? { globals: globals.browser } : {}),
       },
       rules: {
         ...reactPlugin.configs.recommended.rules,
@@ -64,15 +73,19 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
       rules: {
         ...reactHooksPlugin.configs.recommended.rules,
         'react-hooks/exhaustive-deps': ['error', customEffectHooks ? { additionalHooks: customEffectHooks } : {}],
-        'react-hooks/set-state-in-effect': 'off',
-        'react-hooks/refs': 'off',
-        'react-hooks/incompatible-library': 'off',
-        'react-hooks/unsupported-syntax': 'off',
+        ...(reactCompiler
+          ? {}
+          : {
+              'react-hooks/set-state-in-effect': 'off',
+              'react-hooks/refs': 'off',
+              'react-hooks/incompatible-library': 'off',
+              'react-hooks/unsupported-syntax': 'off',
+            }),
       },
     },
   ];
 
-  if (vite) {
+  if (reactRefresh) {
     configs.push(
       {
         plugins: {

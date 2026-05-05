@@ -14,8 +14,15 @@ export type DefineConfigOptions = {
   /** Pass `import.meta.dirname` from your eslint.config.js. */
   root: string;
 
-  /** Enable React rules. Auto-detects `vite` for react-refresh. */
-  react?: boolean | { customEffectHooks?: string } | undefined;
+  /** Enable React rules. Auto-detects `vite` for react-refresh and `babel-plugin-react-compiler` for compiler lints. */
+  react?:
+    | boolean
+    | {
+      customEffectHooks?: string | undefined;
+      reactRefresh?: boolean | undefined;
+      reactCompiler?: boolean | undefined;
+    }
+    | undefined;
 
   /** Enable Astro rules. Auto-detects `@astroscope/i18n` for i18n rules. */
   astro?: boolean | { i18n?: boolean | { ignoreAttributes?: string[] } } | undefined;
@@ -75,7 +82,11 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
 
   if (enableReact) {
     const reactOpts = typeof enableReact === 'object' ? enableReact : {};
-    configs.push(...react({ vite: deps.has('vite'), ...reactOpts }));
+    configs.push(...react({
+      reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
+      reactCompiler: reactOpts.reactCompiler ?? deps.has('babel-plugin-react-compiler'),
+      ...(reactOpts.customEffectHooks !== undefined ? { customEffectHooks: reactOpts.customEffectHooks } : {}),
+    }));
   }
 
   if (tailwindOptions) {
