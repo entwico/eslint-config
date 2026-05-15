@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.4.0
+
+### Minor Changes
+
+- fc0b943: enable `eslint-plugin-unicorn` recommended rules
+
 ## 1.3.0
 
 ### Minor Changes
