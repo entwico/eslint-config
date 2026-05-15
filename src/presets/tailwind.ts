@@ -45,7 +45,7 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
         },
       },
       rules: {
-        ...((recommendedConfig.rules as Record<string, unknown>) ?? {}),
+        ...(recommendedConfig.rules as Record<string, unknown>),
         'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
         'better-tailwindcss/enforce-shorthand-classes': 'off',
         'better-tailwindcss/enforce-consistent-important-position': 'off',

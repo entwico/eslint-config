@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import unicornPlugin from 'eslint-plugin-unicorn';
 import tseslint from 'typescript-eslint';
 
 import { JS_TS_FILES } from '../files.js';
@@ -18,9 +19,9 @@ export type BaseOptions = {
 /** JS + TypeScript rules including type-aware checks. */
 export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
   const typeAwareParserOptions =
-    tsconfigProject !== undefined
-      ? { project: tsconfigProject, tsconfigRootDir: root }
-      : { projectService: true, tsconfigRootDir: root };
+    tsconfigProject === undefined
+      ? { projectService: true, tsconfigRootDir: root }
+      : { project: tsconfigProject, tsconfigRootDir: root };
 
   return [
     {
@@ -53,6 +54,42 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
     },
 
     ...tseslint.configs.recommended.map((c) => ({ files: JS_TS_FILES, ...c })),
+
+    {
+      files: JS_TS_FILES,
+      plugins: unicornPlugin.configs.recommended.plugins ?? {},
+      rules: {
+        ...unicornPlugin.configs.recommended.rules,
+
+        // fights idiomatic React/Astro naming (`props`, `e`, `ref`, `db`, etc.)
+        'unicorn/prevent-abbreviations': 'off',
+
+        // conflicts with PascalCase React/Astro component files
+        'unicorn/filename-case': 'off',
+
+        // React refs and many DOM APIs legitimately use null
+        'unicorn/no-null': 'off',
+
+        // reduce/forEach are legitimate idioms — the rest of the `prefer-*` family already covers the wins
+        'unicorn/no-array-reduce': 'off',
+        'unicorn/no-array-for-each': 'off',
+
+        // miscategorizes closure-capturing helpers as hoistable
+        'unicorn/consistent-function-scoping': 'off',
+
+        // top-level await isn't available in every target/env
+        'unicorn/prefer-top-level-await': 'off',
+
+        // common in Astro page components and util files
+        'unicorn/no-anonymous-default-export': 'off',
+
+        // too opinionated about how to import specific packages
+        'unicorn/import-style': 'off',
+
+        // too aggressive for a shared config
+        'unicorn/expiring-todo-comments': 'off',
+      },
+    },
 
     {
       files: JS_TS_FILES,

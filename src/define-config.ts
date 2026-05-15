@@ -42,7 +42,7 @@ export type DefineConfigOptions = {
 
 function readPackageDeps(root: string): Set<string> {
   try {
-    const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf-8')) as {
+    const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
       dependencies?: Record<string, string>;
       devDependencies?: Record<string, string>;
     };
@@ -69,34 +69,29 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
   } = options;
 
   const deps = readPackageDeps(root);
-  const configs: FlatConfigArray = [];
+  const astroOpts = typeof enableAstro === 'object' ? enableAstro : {};
+  const reactOpts = typeof enableReact === 'object' ? enableReact : {};
 
-  configs.push({ ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] });
+  return [
+    { ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] },
 
-  configs.push(...base({ root, ...(tsconfigProject !== undefined ? { tsconfigProject } : {}) }));
+    ...base({ root, ...(tsconfigProject === undefined ? {} : { tsconfigProject }) }),
 
-  if (enableAstro) {
-    const astroOpts = typeof enableAstro === 'object' ? enableAstro : {};
-    configs.push(...astro({ i18n: deps.has('@astroscope/i18n'), ...astroOpts }));
-  }
+    ...(enableAstro ? astro({ i18n: deps.has('@astroscope/i18n'), ...astroOpts }) : []),
 
-  if (enableReact) {
-    const reactOpts = typeof enableReact === 'object' ? enableReact : {};
-    configs.push(...react({
-      reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
-      reactCompiler: reactOpts.reactCompiler ?? deps.has('babel-plugin-react-compiler'),
-      ...(reactOpts.customEffectHooks !== undefined ? { customEffectHooks: reactOpts.customEffectHooks } : {}),
-    }));
-  }
+    ...(enableReact
+      ? react({
+          reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
+          reactCompiler: reactOpts.reactCompiler ?? deps.has('babel-plugin-react-compiler'),
+          ...(reactOpts.customEffectHooks === undefined ? {} : { customEffectHooks: reactOpts.customEffectHooks }),
+        })
+      : []),
 
-  if (tailwindOptions) {
-    configs.push(...tailwind(tailwindOptions));
-  }
+    ...(tailwindOptions ? tailwind(tailwindOptions) : []),
 
-  configs.push(...imports());
-  configs.push(...stylistic());
+    ...imports(),
+    ...stylistic(),
 
-  configs.push(...extra);
-
-  return configs;
+    ...extra,
+  ];
 }

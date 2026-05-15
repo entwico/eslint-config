@@ -116,10 +116,13 @@ describe('defineConfig', () => {
     expect(configHasPlugin(config, '@astroscope/i18n')).toBe(false);
   });
 
-  it('always includes base, imports, stylistic plugins', () => {
+  it('always includes base, imports, stylistic, unicorn plugins', () => {
     const config = defineConfig({ root: join(FIXTURES, 'plain') });
     expect(configHasPlugin(config, '@stylistic')).toBe(true);
     expect(configHasPlugin(config, 'import-x')).toBe(true);
+    expect(configHasPlugin(config, 'unicorn')).toBe(true);
+    expect(configHasRule(config, 'unicorn/no-array-sort')).toBe(true);
+    expect(configHasRule(config, 'unicorn/no-array-reverse')).toBe(true);
   });
 
   it('does not auto-enable json plugin', () => {
