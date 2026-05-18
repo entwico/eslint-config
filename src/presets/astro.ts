@@ -52,6 +52,17 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
         '@astroscope/no-html-comments': 'error',
       },
     },
+
+    {
+      // Astro compiles frontmatter (the `---` block) into the component's render function, so a bare
+      // top-level `return` short-circuits rendering — it's the idiom for `Astro.rewrite('/404')`,
+      // early `Response` returns, etc. `unicorn/prefer-module` doesn't model this and misfires on
+      // every such return. Disable only inside `.astro` files; keep CJS protection on `.ts`/`.js`.
+      files: ['**/*.astro'],
+      rules: {
+        'unicorn/prefer-module': 'off',
+      },
+    },
   ];
 
   if (i18nEnabled) {
