@@ -8,6 +8,20 @@ import type { FlatConfigArray } from '../types.js';
 const TYPE_AWARE_FILES = ['**/*.{ts,tsx}'];
 const TYPE_AWARE_IGNORES = ['**/*.astro/**'];
 
+// canonical list from create-react-app's `confusing-browser-globals`
+const CONFUSING_BROWSER_GLOBALS = [
+  'addEventListener', 'blur', 'close', 'closed', 'confirm', 'defaultStatus',
+  'defaultstatus', 'event', 'external', 'find', 'focus', 'frameElement',
+  'frames', 'history', 'innerHeight', 'innerWidth', 'length', 'location',
+  'locationbar', 'menubar', 'moveBy', 'moveTo', 'name', 'onblur', 'onerror',
+  'onfocus', 'onload', 'onresize', 'onunload', 'open', 'opener', 'opera',
+  'outerHeight', 'outerWidth', 'pageXOffset', 'pageYOffset', 'parent', 'print',
+  'removeEventListener', 'resizeBy', 'resizeTo', 'screen', 'screenLeft',
+  'screenTop', 'screenX', 'screenY', 'scroll', 'scrollbars', 'scrollBy',
+  'scrollTo', 'scrollX', 'scrollY', 'self', 'status', 'statusbar', 'stop',
+  'toolbar', 'top',
+];
+
 export type BaseOptions = {
   /** Pass `import.meta.dirname` from your eslint.config.js. */
   root: string;
@@ -40,6 +54,13 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
         'object-shorthand': 'error',
         'no-useless-concat': 'error',
         'prefer-template': 'error',
+        'no-restricted-globals': [
+          'error',
+          ...CONFUSING_BROWSER_GLOBALS.map((name) => ({
+            name,
+            message: `Use window.${name} (or globalThis.${name} in worker/SSR code) to make global access explicit.`,
+          })),
+        ],
         'sort-imports': [
           'error',
           {
