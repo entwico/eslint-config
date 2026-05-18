@@ -88,6 +88,9 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // too aggressive for a shared config
         'unicorn/expiring-todo-comments': 'off',
+
+        // less readable in common projects
+        'unicorn/prefer-global-this': 'off',
       },
     },
 
