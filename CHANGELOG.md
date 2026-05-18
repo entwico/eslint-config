@@ -1,5 +1,12 @@
 # @entwico/eslint-config
 
+## 1.5.0
+
+### Minor Changes
+
+- 5b74dfe: require `window.*` instead of bare references for confusing browser globals (`location`, `event`, `name`, `history`, `top`, …)
+- 70eb270: promote warnings to errors (replicate `--max-warnings 0` behavior) and enable `reportUnusedDisableDirectives`
+
 ## 1.4.2
 
 ### Patch Changes
