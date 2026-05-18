@@ -7,11 +7,11 @@ import { defineConfig } from '../src/define-config.js';
 const FIXTURES = join(import.meta.dirname, 'fixtures');
 
 function configHasPlugin(config: ReturnType<typeof defineConfig>, name: string): boolean {
-  return config.some((c) => c.plugins != null && name in c.plugins);
+  return config.some((c) => c.plugins !== undefined && name in c.plugins);
 }
 
 function configHasRule(config: ReturnType<typeof defineConfig>, ruleId: string): boolean {
-  return config.some((c) => c.rules != null && ruleId in c.rules);
+  return config.some((c) => c.rules !== undefined && ruleId in c.rules);
 }
 
 function ruleIsDisabled(config: ReturnType<typeof defineConfig>, ruleId: string): boolean {
@@ -48,7 +48,7 @@ describe('defineConfig', () => {
       root: join(FIXTURES, 'plain'),
       extra: [sentinel],
     });
-    expect(config[config.length - 1]).toBe(sentinel);
+    expect(config.at(-1)).toBe(sentinel);
   });
 
   it('does not include react-refresh plugin without vite in deps', () => {
@@ -134,12 +134,56 @@ describe('defineConfig', () => {
     const root = join(FIXTURES, 'plain');
     const config = defineConfig({ root });
 
-    const block = config.find(
-      (c) => (c.languageOptions?.parserOptions as { tsconfigRootDir?: string } | undefined)?.tsconfigRootDir != null,
-    );
+    const block = config.find((c) => {
+      const opts = c.languageOptions?.parserOptions as { tsconfigRootDir?: string } | undefined;
+      return opts?.tsconfigRootDir !== undefined;
+    });
 
     const parserOptions = block?.languageOptions?.parserOptions as { tsconfigRootDir?: string } | undefined;
     expect(parserOptions?.tsconfigRootDir).toBe(root);
+  });
+
+  it('enables reportUnusedDisableDirectives at error severity', () => {
+    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+    const block = config.find(
+      (c) => c.linterOptions?.reportUnusedDisableDirectives !== undefined,
+    );
+    expect(block?.linterOptions?.reportUnusedDisableDirectives).toBe('error');
+  });
+
+  it('promotes warn-severity rules inside `extra` by default', () => {
+    const config = defineConfig({
+      root: join(FIXTURES, 'plain'),
+      extra: [{ rules: { 'no-debugger': 'warn' } }],
+    });
+    const last = config.at(-1);
+    expect(last?.rules?.['no-debugger']).toBe('error');
+  });
+
+  it('leaves `extra` severities verbatim when extraPromoteWarnings is false', () => {
+    const config = defineConfig({
+      root: join(FIXTURES, 'plain'),
+      extra: [{ rules: { 'no-debugger': 'warn' } }],
+      extraPromoteWarnings: false,
+    });
+    const last = config.at(-1);
+    expect(last?.rules?.['no-debugger']).toBe('warn');
+  });
+
+  it('promotes every shipped warn-severity rule to error', () => {
+    const config = defineConfig({
+      root: join(FIXTURES, 'with-vite'),
+      react: true,
+      astro: { i18n: true },
+    });
+    for (const block of config) {
+      if (block.rules === undefined) continue;
+      for (const [id, entry] of Object.entries(block.rules)) {
+        const severity = Array.isArray(entry) ? entry[0] : entry;
+        expect(severity, `rule ${id} should not ship at warn`).not.toBe('warn');
+        expect(severity, `rule ${id} should not ship at numeric 1`).not.toBe(1);
+      }
+    }
   });
 
   it('forwards tsconfigProject to the base preset', () => {

@@ -9,6 +9,7 @@ import { react } from './presets/react.js';
 import { stylistic } from './presets/stylistic.js';
 import { tailwind } from './presets/tailwind.js';
 import type { FlatConfigArray } from './types.js';
+import { promoteWarnings } from './utils/promote-warnings.js';
 
 export type DefineConfigOptions = {
   /** Pass `import.meta.dirname` from your eslint.config.js. */
@@ -38,6 +39,13 @@ export type DefineConfigOptions = {
 
   /** Extra flat-config blocks appended last. */
   extra?: FlatConfigArray | undefined;
+
+  /**
+   * Apply the same `warn` → `error` promotion to your `extra` blocks.
+   * Set to `false` to keep consumer-chosen severities verbatim.
+   * @default true
+   */
+  extraPromoteWarnings?: boolean | undefined;
 };
 
 function readPackageDeps(root: string): Set<string> {
@@ -66,6 +74,7 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
     tsconfigProject,
     ignores,
     extra = [],
+    extraPromoteWarnings = true,
   } = options;
 
   const deps = readPackageDeps(root);
@@ -73,25 +82,28 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
   const reactOpts = typeof enableReact === 'object' ? enableReact : {};
 
   return [
-    { ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] },
+    ...promoteWarnings([
+      { ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] },
+      { linterOptions: { reportUnusedDisableDirectives: 'error' } },
 
-    ...base({ root, ...(tsconfigProject === undefined ? {} : { tsconfigProject }) }),
+      ...base({ root, ...(tsconfigProject === undefined ? {} : { tsconfigProject }) }),
 
-    ...(enableAstro ? astro({ i18n: deps.has('@astroscope/i18n'), ...astroOpts }) : []),
+      ...(enableAstro ? astro({ i18n: deps.has('@astroscope/i18n'), ...astroOpts }) : []),
 
-    ...(enableReact
-      ? react({
-          reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
-          reactCompiler: reactOpts.reactCompiler ?? deps.has('babel-plugin-react-compiler'),
-          ...(reactOpts.customEffectHooks === undefined ? {} : { customEffectHooks: reactOpts.customEffectHooks }),
-        })
-      : []),
+      ...(enableReact
+        ? react({
+            reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
+            reactCompiler: reactOpts.reactCompiler ?? deps.has('babel-plugin-react-compiler'),
+            ...(reactOpts.customEffectHooks === undefined ? {} : { customEffectHooks: reactOpts.customEffectHooks }),
+          })
+        : []),
 
-    ...(tailwindOptions ? tailwind(tailwindOptions) : []),
+      ...(tailwindOptions ? tailwind(tailwindOptions) : []),
 
-    ...imports(),
-    ...stylistic(),
+      ...imports(),
+      ...stylistic(),
+    ]),
 
-    ...extra,
+    ...(extraPromoteWarnings ? promoteWarnings(extra) : extra),
   ];
 }

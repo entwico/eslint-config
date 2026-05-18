@@ -55,7 +55,7 @@ describe('react preset', () => {
 
   it('disables compiler-specific react-hooks rules by default', () => {
     const configs = react();
-    const hooksBlock = configs.find((c) => c.rules != null && 'react-hooks/refs' in c.rules);
+    const hooksBlock = configs.find((c) => c.rules !== undefined && 'react-hooks/refs' in c.rules);
     expect(hooksBlock?.rules?.['react-hooks/refs']).toBe('off');
     expect(hooksBlock?.rules?.['react-hooks/incompatible-library']).toBe('off');
     expect(hooksBlock?.rules?.['react-hooks/unsupported-syntax']).toBe('off');
@@ -64,7 +64,7 @@ describe('react preset', () => {
 
   it('keeps compiler-specific react-hooks rules on when reactCompiler: true', () => {
     const configs = react({ reactCompiler: true });
-    const hooksBlock = configs.find((c) => c.rules != null && 'react-hooks/exhaustive-deps' in c.rules);
+    const hooksBlock = configs.find((c) => c.rules !== undefined && 'react-hooks/exhaustive-deps' in c.rules);
     expect(hooksBlock?.rules?.['react-hooks/refs']).not.toBe('off');
     expect(hooksBlock?.rules?.['react-hooks/incompatible-library']).not.toBe('off');
     expect(hooksBlock?.rules?.['react-hooks/unsupported-syntax']).not.toBe('off');

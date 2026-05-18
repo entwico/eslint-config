@@ -8,10 +8,10 @@ describe('astro preset', () => {
 
     const block = config.find(
       (entry) =>
-        Array.isArray(entry.files)
-        && entry.files.length === 1
-        && entry.files[0] === '**/*.astro'
-        && entry.rules?.['unicorn/prefer-module'] === 'off',
+        Array.isArray(entry.files) &&
+        entry.files.length === 1 &&
+        entry.files[0] === '**/*.astro' &&
+        entry.rules?.['unicorn/prefer-module'] === 'off',
     );
 
     expect(block, 'expected an .astro-scoped block disabling unicorn/prefer-module').toBeDefined();
