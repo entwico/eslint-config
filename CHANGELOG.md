@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.4.2
+
+### Patch Changes
+
+- e7abd17: disable prefer-global-this
+
 ## 1.4.1
 
 ### Patch Changes
