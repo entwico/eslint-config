@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.4.1
+
+### Patch Changes
+
+- ef54d33: stop flagging top-level `return` in Astro frontmatter
+
 ## 1.4.0
 
 ### Minor Changes
