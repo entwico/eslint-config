@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.6.0
+
+### Minor Changes
+
+- b4d972c: update bundled plugins (@astroscope/eslint-plugin 0.2, @eslint/json 2, typescript-eslint 8.60)
+
 ## 1.5.0
 
 ### Minor Changes
