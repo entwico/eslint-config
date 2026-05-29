@@ -3,7 +3,7 @@
   "version": "1.5.0",
   "description": "Shared ESLint flat config (TS, React, Astro, Tailwind)",
   "type": "module",
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "pnpm@11.4.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -43,7 +43,7 @@
     "build": "tsup",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint",
+    "lint": "eslint --cache",
     "lint:fix": "eslint --fix",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -53,12 +53,12 @@
     "ci:publish": "changeset publish"
   },
   "dependencies": {
-    "@astroscope/eslint-plugin": "^0.1.0",
+    "@astroscope/eslint-plugin": "^0.2.0",
     "@astroscope/eslint-plugin-i18n": "^0.1.6",
     "@eslint/js": "^9.27.0",
-    "@eslint/json": "^1.2.0",
+    "@eslint/json": "^2.0.0",
     "@stylistic/eslint-plugin": "^6.0.0-beta.4",
-    "@typescript-eslint/parser": "^8.59.1",
+    "@typescript-eslint/parser": "^8.60.0",
     "eslint-plugin-astro": "^1.7.0",
     "eslint-plugin-better-tailwindcss": "^4.5.0",
     "eslint-plugin-import-x": "^4.16.2",
@@ -68,7 +68,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "eslint-plugin-unicorn": "^64.0.0",
     "globals": "^17.6.0",
-    "typescript-eslint": "^8.59.1"
+    "typescript-eslint": "^8.60.0"
   },
   "peerDependencies": {
     "eslint": "^9.0.0",
@@ -77,10 +77,10 @@
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@types/eslint": "^9.6.1",
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.9.1",
     "eslint": "^9.27.0",
     "tsup": "^8.5.1",
     "typescript": "^5.8.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.7"
   }
 }
