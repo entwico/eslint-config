@@ -62,4 +62,28 @@ describe('stylistic preset', () => {
     const messages = lint(code, stylistic(), 'a.tsx');
     expect(ruleIds(messages)).not.toContain('@stylistic/jsx-one-expression-per-line');
   });
+
+  it('flags a trailing comment with no space before it', () => {
+    const messages = lint('const x = 1;// trailing', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@entwico/space-before-comment');
+  });
+
+  it('flags a trailing block comment with no space before it', () => {
+    const messages = lint('const x = 1;/* trailing */', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@entwico/space-before-comment');
+  });
+
+  it('accepts a trailing comment with a space before it', () => {
+    const messages = lint('const x = 1; // trailing', stylistic(), 'a.ts');
+    expect(ruleIds(messages)).not.toContain('@entwico/space-before-comment');
+  });
+
+  it('ignores full-line comments', () => {
+    const code = [
+      '// leading comment',
+      'const x = 1;',
+    ].join('\n');
+    const messages = lint(code, stylistic(), 'a.ts');
+    expect(ruleIds(messages)).not.toContain('@entwico/space-before-comment');
+  });
 });
