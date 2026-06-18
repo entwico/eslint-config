@@ -1,5 +1,16 @@
 # @entwico/eslint-config
 
+## 1.7.0
+
+### Minor Changes
+
+- a80dfdb: enforce read-only React props (`react/prefer-read-only-props`, auto-fixable), and lint hydrated Astro islands for mutable or non-serializable props and stray `client:*` directives on Astro components. Also updates bundled plugins (eslint-plugin-unicorn 65, typescript-eslint 8.61, @astroscope/eslint-plugin 0.3).
+- 00c97ae: enforce a space between code and a trailing comment (auto-fixable)
+
+### Patch Changes
+
+- a80dfdb: type-aware `@astroscope` rules (e.g. `no-excess-jsx-props`) now run on `.astro` files — they were silently skipped before for lack of type info
+
 ## 1.6.0
 
 ### Minor Changes
