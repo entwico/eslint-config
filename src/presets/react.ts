@@ -58,6 +58,7 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
         'react/react-in-jsx-scope': 'off',
         'react/prop-types': 'off',
         'react/self-closing-comp': ['error', { component: true, html: true }],
+        'react/prefer-read-only-props': 'error',
       },
     },
 

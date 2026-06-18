@@ -4,7 +4,14 @@ import tsParser from '@typescript-eslint/parser';
 import eslintPluginAstro from 'eslint-plugin-astro';
 
 import { JS_TS_FILES } from '../files.js';
-import type { FlatConfigArray } from '../types.js';
+import type { FlatConfig, FlatConfigArray } from '../types.js';
+
+// rule set sourced from the plugin's `recommended` config so new rules arrive on dep bumps
+const astroscopeRecommendedRules = Object.assign(
+  {},
+  ...((astroscopePlugin as { configs?: { recommended?: { rules?: FlatConfig['rules'] }[] } }).configs?.recommended ??
+    []).map((config) => config.rules ?? {}),
+) as NonNullable<FlatConfig['rules']>;
 
 export type AstroI18nOptions = {
   /** Attribute names added to the i18n no-raw-strings ignore list. */
@@ -14,21 +21,32 @@ export type AstroI18nOptions = {
 export type AstroOptions = {
   /** Enable @astroscope/i18n rules. Pass an object to extend ignored attributes. */
   i18n?: boolean | AstroI18nOptions | undefined;
+
+  /**
+   * tsconfig path(s) for type-aware rules on `.astro`. Defaults to `true` (auto-discovery).
+   * astro-eslint-parser supports `project`, not `projectService`.
+   */
+  tsconfigProject?: string | string[] | undefined;
 };
 
 /** Astro + @astroscope/eslint-plugin rules. */
 export function astro(options: AstroOptions = {}): FlatConfigArray {
-  const { i18n = false } = options;
+  const { i18n = false, tsconfigProject } = options;
   const i18nEnabled = i18n !== false;
   const i18nIgnoreAttributes = typeof i18n === 'object' ? (i18n.ignoreAttributes ?? []) : [];
+  const astroProject = tsconfigProject ?? true;
 
   const configs: FlatConfigArray = [
     ...eslintPluginAstro.configs.recommended.map((config) => {
       const languageOptions = config.languageOptions ?? {};
+
+      // only the astro-parser block gets `project`; on .ts/.tsx it clashes with base's `projectService`
+      if (typeof languageOptions !== 'object' || !('parser' in languageOptions) || !languageOptions.parser) {
+        return config;
+      }
+
       const parserOptions =
-        typeof languageOptions === 'object' && 'parserOptions' in languageOptions
-          ? (languageOptions.parserOptions as Record<string, unknown>)
-          : {};
+        'parserOptions' in languageOptions ? (languageOptions.parserOptions as Record<string, unknown>) : {};
 
       return {
         ...config,
@@ -37,6 +55,8 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
           parserOptions: {
             ...parserOptions,
             parser: tsParser,
+            // without `project`, .astro has no type info and type-aware rules silently no-op
+            project: astroProject,
           },
         },
       };
@@ -47,17 +67,12 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
     {
       files: JS_TS_FILES,
       plugins: { '@astroscope': astroscopePlugin as never },
-      rules: {
-        '@astroscope/no-excess-jsx-props': 'error',
-        '@astroscope/no-html-comments': 'error',
-      },
+      rules: astroscopeRecommendedRules,
     },
 
     {
-      // Astro compiles frontmatter (the `---` block) into the component's render function, so a bare
-      // top-level `return` short-circuits rendering — it's the idiom for `Astro.rewrite('/404')`,
-      // early `Response` returns, etc. `unicorn/prefer-module` doesn't model this and misfires on
-      // every such return. Disable only inside `.astro` files; keep CJS protection on `.ts`/`.js`.
+      // in .astro, a bare top-level `return` in frontmatter is the `Astro.rewrite`/early-`Response`
+      // idiom; `unicorn/prefer-module` misfires on it. disable for .astro only; keep it on .ts/.js.
       files: ['**/*.astro'],
       rules: {
         'unicorn/prefer-module': 'off',

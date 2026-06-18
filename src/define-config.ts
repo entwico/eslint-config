@@ -88,7 +88,13 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
 
       ...base({ root, ...(tsconfigProject === undefined ? {} : { tsconfigProject }) }),
 
-      ...(enableAstro ? astro({ i18n: deps.has('@astroscope/i18n'), ...astroOpts }) : []),
+      ...(enableAstro
+        ? astro({
+            i18n: deps.has('@astroscope/i18n'),
+            ...(tsconfigProject === undefined ? {} : { tsconfigProject }),
+            ...astroOpts,
+          })
+        : []),
 
       ...(enableReact
         ? react({

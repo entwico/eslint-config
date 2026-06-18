@@ -3,8 +3,8 @@ import { type FunctionComponent, type PropsWithChildren, useEffect, useId, useRe
 import { cn } from '@/lib/cn.js';
 
 export type ExpandableTextProps = PropsWithChildren<{
-  maxLines: number;
-  className?: string | undefined;
+  readonly maxLines: number;
+  readonly className?: string | undefined;
 }>;
 
 export const ExpandableText: FunctionComponent<ExpandableTextProps> = ({ maxLines, children, className }) => {

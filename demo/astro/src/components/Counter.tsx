@@ -3,8 +3,8 @@ import { type FunctionComponent, useState } from 'react';
 import { cn } from '../lib/cn.js';
 
 export type CounterProps = {
-  initial?: number | undefined;
-  className?: string | undefined;
+  readonly initial?: number | undefined;
+  readonly className?: string | undefined;
 };
 
 export const Counter: FunctionComponent<CounterProps> = ({ initial = 0, className }) => {

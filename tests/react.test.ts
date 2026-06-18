@@ -22,6 +22,12 @@ describe('react preset', () => {
     expect(ruleIds(messages)).not.toContain('react/react-in-jsx-scope');
   });
 
+  it('enables prefer-read-only-props by default', () => {
+    const configs = react();
+    const block = configs.find((c) => c.rules?.['react/prefer-read-only-props'] !== undefined);
+    expect(block?.rules?.['react/prefer-read-only-props']).toBe('error');
+  });
+
   it('flags useEffect with missing dependency', () => {
     const code = [
       'import { useEffect, useState } from \'react\';',
