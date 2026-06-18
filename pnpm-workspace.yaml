@@ -2,7 +2,8 @@ packages:
   - '.'
   - 'demo/*'
 
-minimumReleaseAge: 0
+minimumReleaseAgeExclude:
+  - '@astroscope/*'
 
 allowBuilds:
   esbuild: true
