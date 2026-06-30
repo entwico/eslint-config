@@ -55,6 +55,7 @@ export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
           { overrides: { '?': 'before', ':': 'before', '|': 'before', '&': 'before' } },
         ],
         '@stylistic/jsx-one-expression-per-line': 'off',
+        '@stylistic/jsx-self-closing-comp': ['error', { component: true, html: true }],
         '@stylistic/multiline-ternary': 'off',
         '@stylistic/max-len': [
           'error',

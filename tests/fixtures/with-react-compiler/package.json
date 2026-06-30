@@ -1,7 +1,0 @@
-{
-  "name": "fixture-with-react-compiler",
-  "private": true,
-  "devDependencies": {
-    "babel-plugin-react-compiler": "^1.0.0"
-  }
-}

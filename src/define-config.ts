@@ -15,13 +15,12 @@ export type DefineConfigOptions = {
   /** Pass `import.meta.dirname` from your eslint.config.js. */
   root: string;
 
-  /** Enable React rules. Auto-detects `vite` for react-refresh and `babel-plugin-react-compiler` for compiler lints. */
+  /** Enable React rules. Auto-detects `vite` for react-refresh. */
   react?:
     | boolean
     | {
       customEffectHooks?: string | undefined;
       reactRefresh?: boolean | undefined;
-      reactCompiler?: boolean | undefined;
     }
     | undefined;
 
@@ -99,7 +98,6 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
       ...(enableReact
         ? react({
             reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
-            reactCompiler: reactOpts.reactCompiler ?? deps.has('babel-plugin-react-compiler'),
             ...(reactOpts.customEffectHooks === undefined ? {} : { customEffectHooks: reactOpts.customEffectHooks }),
           })
         : []),

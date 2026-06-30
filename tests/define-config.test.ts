@@ -14,10 +14,6 @@ function configHasRule(config: ReturnType<typeof defineConfig>, ruleId: string):
   return config.some((c) => c.rules !== undefined && ruleId in c.rules);
 }
 
-function ruleIsDisabled(config: ReturnType<typeof defineConfig>, ruleId: string): boolean {
-  return config.some((c) => c.rules?.[ruleId] === 'off');
-}
-
 describe('defineConfig', () => {
   it('returns a non-empty flat-config array', () => {
     const config = defineConfig({ root: join(FIXTURES, 'plain') });
@@ -61,36 +57,20 @@ describe('defineConfig', () => {
     expect(configHasPlugin(config, 'react-refresh')).toBe(true);
   });
 
-  it('disables compiler-specific react-hooks rules when babel-plugin-react-compiler is absent', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain'), react: true });
-    expect(ruleIsDisabled(config, 'react-hooks/refs')).toBe(true);
-    expect(ruleIsDisabled(config, 'react-hooks/incompatible-library')).toBe(true);
-    expect(ruleIsDisabled(config, 'react-hooks/unsupported-syntax')).toBe(true);
-    expect(ruleIsDisabled(config, 'react-hooks/set-state-in-effect')).toBe(true);
-  });
-
-  it('auto-enables compiler-specific react-hooks rules when babel-plugin-react-compiler is in deps', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'with-react-compiler'), react: true });
-    expect(ruleIsDisabled(config, 'react-hooks/refs')).toBe(false);
-    expect(ruleIsDisabled(config, 'react-hooks/incompatible-library')).toBe(false);
-    expect(ruleIsDisabled(config, 'react-hooks/unsupported-syntax')).toBe(false);
-    expect(ruleIsDisabled(config, 'react-hooks/set-state-in-effect')).toBe(false);
-  });
-
   it('treats explicit undefined the same as omitted (auto-detection still applies)', () => {
     const config = defineConfig({
-      root: join(FIXTURES, 'with-react-compiler'),
-      react: { reactCompiler: undefined, reactRefresh: undefined },
+      root: join(FIXTURES, 'with-vite'),
+      react: { reactRefresh: undefined },
     });
-    expect(ruleIsDisabled(config, 'react-hooks/refs')).toBe(false);
+    expect(configHasPlugin(config, 'react-refresh')).toBe(true);
   });
 
   it('lets explicit false override auto-detection', () => {
     const config = defineConfig({
-      root: join(FIXTURES, 'with-react-compiler'),
-      react: { reactCompiler: false },
+      root: join(FIXTURES, 'with-vite'),
+      react: { reactRefresh: false },
     });
-    expect(ruleIsDisabled(config, 'react-hooks/refs')).toBe(true);
+    expect(configHasPlugin(config, 'react-refresh')).toBe(false);
   });
 
   it('does not include astroscope/i18n plugin when @astroscope/i18n is absent', () => {

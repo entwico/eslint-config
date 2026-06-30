@@ -2,6 +2,8 @@ packages:
   - '.'
   - 'demo/*'
 
+minimumReleaseAge: 1440
+
 minimumReleaseAgeExclude:
   - '@astroscope/*'
 
@@ -9,3 +11,7 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+peerDependencyRules:
+  allowedVersions:
+    'eslint-plugin-jsx-a11y>eslint': '10' # works fine on v10
