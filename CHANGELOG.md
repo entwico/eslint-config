@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.2
+
+### Patch Changes
+
+- dfa1e4f: disable `unicorn/max-nested-calls` because of zod conflicts
+
 ## 2.0.1
 
 ### Patch Changes
