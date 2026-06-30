@@ -31,6 +31,16 @@ export const spaceBeforeComment: Rule.RuleModule = {
             continue;
           }
 
+          // `{/* ... */}` is the idiomatic way to write a JSX/Astro comment
+          if (prev.value === '{') {
+            // estree's Node union has no JSX members, so widen to read `type`
+            const container = sourceCode.getNodeByRangeIndex(prev.range[0]) as { type: string } | null;
+
+            if (container?.type === 'JSXExpressionContainer') {
+              continue;
+            }
+          }
+
           if (comment.range[0] - prev.range[1] < 1) {
             context.report({
               node: comment,

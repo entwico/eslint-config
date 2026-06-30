@@ -78,6 +78,12 @@ describe('stylistic preset', () => {
     expect(ruleIds(messages)).not.toContain('@entwico/space-before-comment');
   });
 
+  it('ignores a JSX expression-container comment', () => {
+    const code = 'const x = <div>{/* a comment */}</div>;';
+    const messages = lint(code, stylistic(), 'a.tsx');
+    expect(ruleIds(messages)).not.toContain('@entwico/space-before-comment');
+  });
+
   it('ignores full-line comments', () => {
     const code = [
       '// leading comment',
