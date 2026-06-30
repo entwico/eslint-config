@@ -15,3 +15,14 @@ const { title, href } = Astro.props;
     <slot />
   </div>
 </article>
+
+<script>
+  // inline client script with TS syntax
+  const cards = document.querySelectorAll('article') as NodeListOf<HTMLElement>;
+
+  for (const card of cards) {
+    card.addEventListener('click', () => {
+      card.classList.toggle('ring-2');
+    });
+  }
+</script>

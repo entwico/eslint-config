@@ -28,9 +28,17 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
     a11yStrict = true,
   } = options;
 
+  // eslint-react's type-aware rules need parserServices, which the astro processor's virtual
+  // `<name>.astro/<n>.ts` script files don't have — exclude them (mirrors base's TYPE_AWARE_IGNORES).
+  const ASTRO_VIRTUAL_FILES = '**/*.astro/**';
+
   // eslint-react presets ship as flat-config object(s); normalize to an array and scope to our files.
   const scopeToFiles = (preset: FlatConfig | FlatConfig[]): FlatConfig[] =>
-    [preset].flat().map((config) => ({ ...config, files }));
+    [preset].flat().map((config) => ({
+      ...config,
+      files,
+      ignores: [...(config.ignores ?? []), ASTRO_VIRTUAL_FILES],
+    }));
 
   const configs: FlatConfigArray = [
     {
@@ -54,6 +62,7 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
 
     {
       files,
+      ignores: [ASTRO_VIRTUAL_FILES],
       rules: customEffectHooks
         ? { '@eslint-react/exhaustive-deps': ['warn', { additionalHooks: customEffectHooks }] }
         : {},
