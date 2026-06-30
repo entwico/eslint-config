@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.4
+
+### Patch Changes
+
+- 390e259: disable `unicorn/no-top-level-side-effects`, `unicorn/no-top-level-assignment-in-function`, and `unicorn/no-process-exit`
+
 ## 2.0.3
 
 ### Patch Changes
