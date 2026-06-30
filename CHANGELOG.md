@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.1
+
+### Patch Changes
+
+- 3c4dde5: fix Astro inline scripts crash
+
 ## 2.0.0
 
 ### Major Changes
