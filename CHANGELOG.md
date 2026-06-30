@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.5
+
+### Patch Changes
+
+- 35dc392: fix `@stylistic/max-len` flagging `eslint-disable`/`eslint-enable` directive lines
+
 ## 2.0.4
 
 ### Patch Changes
