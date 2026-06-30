@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.3
+
+### Patch Changes
+
+- d80f153: Tailwind rules now properly lint classes inside `cn`/`cva`/`clsx` object keys and values (e.g. `cn({ 'px-2 flex': cond })`)
+
 ## 2.0.2
 
 ### Patch Changes
