@@ -66,6 +66,8 @@ export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
             ignoreStrings: true,
             ignoreTemplateLiterals: true,
             ignoreRegExpLiterals: true,
+            // eslint directives can't be wrapped
+            ignorePattern: 'eslint-disable|eslint-enable',
           },
         ],
       },

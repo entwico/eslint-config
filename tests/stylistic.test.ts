@@ -84,6 +84,18 @@ describe('stylistic preset', () => {
     expect(ruleIds(messages)).not.toContain('@entwico/space-before-comment');
   });
 
+  it('does not cap the length of un-wrappable eslint directive lines', () => {
+    const code = '// eslint-disable-next-line @eslint-react/no-array-index-key -- CMS free-text item, no stable id; fixed per render\nconst x = 1;';
+    const messages = lint(code, stylistic(), 'a.ts');
+    expect(ruleIds(messages)).not.toContain('@stylistic/max-len');
+  });
+
+  it('still caps the length of ordinary long comments', () => {
+    const code = '// this is an ordinary prose comment that intentionally runs well past the configured one-hundred-and-twenty character maximum so that max-len fires';
+    const messages = lint(code, stylistic(), 'a.ts');
+    expect(ruleIds(messages)).toContain('@stylistic/max-len');
+  });
+
   it('ignores full-line comments', () => {
     const code = [
       '// leading comment',
