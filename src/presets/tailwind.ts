@@ -50,11 +50,9 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
         'better-tailwindcss/enforce-shorthand-classes': 'off',
         'better-tailwindcss/enforce-consistent-important-position': 'off',
         'better-tailwindcss/enforce-consistent-variable-syntax': 'off',
-        ...(ignoreClasses
-          ? {
-              'better-tailwindcss/no-unknown-classes': ['error', { ignore: ignoreClasses }],
-            }
-          : {}),
+        ...(ignoreClasses && {
+          'better-tailwindcss/no-unknown-classes': ['error', { ignore: ignoreClasses }],
+        }),
       },
     },
   ];

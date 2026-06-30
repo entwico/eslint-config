@@ -13,19 +13,17 @@ export const ExpandableText: FunctionComponent<ExpandableTextProps> = ({ maxLine
   const [overflowing, setOverflowing] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const element = ref.current;
+    if (!element) return;
 
-    const measure = () => {
-      // eslint-disable-next-line @eslint-react/set-state-in-effect -- measuring DOM overflow requires an effect
-      setOverflowing(el.clientHeight < el.scrollHeight - 5);
-    };
+    const observer = new ResizeObserver(() => {
+      setOverflowing(element.clientHeight < element.scrollHeight - 5);
+    });
 
-    measure();
-    window.addEventListener('resize', measure);
+    observer.observe(element);
 
     return () => {
-      window.removeEventListener('resize', measure);
+      observer.disconnect();
     };
   }, []);
 

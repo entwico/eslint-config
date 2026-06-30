@@ -85,12 +85,12 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
       { ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] },
       { linterOptions: { reportUnusedDisableDirectives: 'error' } },
 
-      ...base({ root, ...(tsconfigProject === undefined ? {} : { tsconfigProject }) }),
+      ...base({ root, ...(tsconfigProject !== undefined && { tsconfigProject }) }),
 
       ...(enableAstro
         ? astro({
             i18n: deps.has('@astroscope/i18n'),
-            ...(tsconfigProject === undefined ? {} : { tsconfigProject }),
+            ...(tsconfigProject !== undefined && { tsconfigProject }),
             ...astroOpts,
           })
         : []),
@@ -98,7 +98,7 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
       ...(enableReact
         ? react({
             reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
-            ...(reactOpts.customEffectHooks === undefined ? {} : { customEffectHooks: reactOpts.customEffectHooks }),
+            ...(reactOpts.customEffectHooks !== undefined && { customEffectHooks: reactOpts.customEffectHooks }),
           })
         : []),
 

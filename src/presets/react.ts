@@ -45,7 +45,7 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
         parserOptions: {
           ecmaFeatures: { jsx: true },
         },
-        ...(reactRefresh ? { globals: globals.browser } : {}),
+        ...(reactRefresh && { globals: globals.browser }),
       },
     },
 
@@ -62,7 +62,7 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
     {
       files,
       rules: {
-        ...(a11yStrict ? jsxA11y.flatConfigs.strict.rules : jsxA11y.flatConfigs.recommended.rules),
+        ...jsxA11y.flatConfigs[a11yStrict ? 'strict' : 'recommended'].rules,
       },
     },
   ];

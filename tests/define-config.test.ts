@@ -7,11 +7,11 @@ import { defineConfig } from '../src/define-config.js';
 const FIXTURES = join(import.meta.dirname, 'fixtures');
 
 function configHasPlugin(config: ReturnType<typeof defineConfig>, name: string): boolean {
-  return config.some((c) => c.plugins !== undefined && name in c.plugins);
+  return config.some((c) => c.plugins !== undefined && Object.hasOwn(c.plugins, name));
 }
 
 function configHasRule(config: ReturnType<typeof defineConfig>, ruleId: string): boolean {
-  return config.some((c) => c.rules !== undefined && ruleId in c.rules);
+  return config.some((c) => c.rules !== undefined && Object.hasOwn(c.rules, ruleId));
 }
 
 describe('defineConfig', () => {

@@ -18,8 +18,8 @@ export function ruleIds(messages: Linter.LintMessage[]): string[] {
 export function expectRules(messages: Linter.LintMessage[]): { toFire(rules: string[]): void } {
   return {
     toFire(rules: string[]) {
-      const actual = ruleIds(messages).toSorted();
-      const expected = rules.toSorted();
+      const actual = ruleIds(messages).toSorted((a, b) => a.localeCompare(b));
+      const expected = rules.toSorted((a, b) => a.localeCompare(b));
       if (actual.join(',') !== expected.join(',')) {
         throw new Error(`expected rules [${expected.join(', ')}], got [${actual.join(', ')}]\nmessages:\n${JSON.stringify(messages, null, 2)}`);
       }

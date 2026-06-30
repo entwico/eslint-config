@@ -82,8 +82,8 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
       rules: {
         ...unicornPlugin.configs.recommended.rules,
 
-        // fights idiomatic React/Astro naming (`props`, `e`, `ref`, `db`, etc.)
-        'unicorn/prevent-abbreviations': 'off',
+        // fights idiomatic naming (`props`, `e`, `ref`, etc.)
+        'unicorn/name-replacements': 'off',
 
         // conflicts with PascalCase React/Astro component files
         'unicorn/filename-case': 'off',
@@ -93,7 +93,7 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // reduce/forEach are legitimate idioms — the rest of the `prefer-*` family already covers the wins
         'unicorn/no-array-reduce': 'off',
-        'unicorn/no-array-for-each': 'off',
+        'unicorn/no-for-each': 'off',
 
         // miscategorizes closure-capturing helpers as hoistable
         'unicorn/consistent-function-scoping': 'off',
@@ -112,6 +112,9 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // less readable in common projects
         'unicorn/prefer-global-this': 'off',
+
+        // too opinionated — fights idiomatic flag/predicate names (`changed`, `enabled`, `hasFoo`)
+        'unicorn/consistent-boolean-name': 'off',
       },
     },
 
