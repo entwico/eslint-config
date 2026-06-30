@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 1.7.1
+
+### Patch Changes
+
+- 05a4e1f: stop flagging JSX/Astro expression comments (`{/* ... */}`) for a missing leading space
+
 ## 1.7.0
 
 ### Minor Changes
