@@ -115,6 +115,9 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // too opinionated — fights idiomatic flag/predicate names (`changed`, `enabled`, `hasFoo`)
         'unicorn/consistent-boolean-name': 'off',
+
+        // fires on idiomatic nested zod schemas (`z.object({ a: z.array(z.object(...)) })`)
+        'unicorn/max-nested-calls': 'off',
       },
     },
 
