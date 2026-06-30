@@ -8,4 +8,4 @@ export { imports, type ImportsOptions } from './presets/imports.js';
 export { json, type JsonOptions } from './presets/json.js';
 export { react, type ReactOptions } from './presets/react.js';
 export { stylistic, type StylisticOptions } from './presets/stylistic.js';
-export { tailwind, type TailwindOptions } from './presets/tailwind.js';
+export { tailwind, type TailwindCallee, type TailwindClassMatcher, type TailwindOptions } from './presets/tailwind.js';

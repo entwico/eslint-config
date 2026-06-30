@@ -28,8 +28,8 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
     a11yStrict = true,
   } = options;
 
-  // eslint-react's type-aware rules need parserServices, which the astro processor's virtual
-  // `<name>.astro/<n>.ts` script files don't have — exclude them (mirrors base's TYPE_AWARE_IGNORES).
+  // astro's virtual `<name>.astro/<n>.ts` script files have no type service — type-aware rules
+  // throw on them, so exclude them (mirrors base's TYPE_AWARE_IGNORES).
   const ASTRO_VIRTUAL_FILES = '**/*.astro/**';
 
   // eslint-react presets ship as flat-config object(s); normalize to an array and scope to our files.

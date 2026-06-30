@@ -3,12 +3,20 @@ import tailwindPlugin from 'eslint-plugin-better-tailwindcss';
 import { JS_TS_FILES } from '../files.js';
 import type { FlatConfigArray } from '../types.js';
 
+export type TailwindClassMatcher = {
+  match: 'strings' | 'objectKeys' | 'objectValues';
+  pathPattern?: string | undefined;
+};
+
+/** A bare name matches string args only; use `['cn', [{ match: 'objectKeys' }]]` to also lint object keys. */
+export type TailwindCallee = string | [string, TailwindClassMatcher[]];
+
 export type TailwindOptions = {
   /** Path to the Tailwind CSS entry file. */
   entryPoint: string;
 
-  /** Functions that accept Tailwind class strings. */
-  callees?: string[] | undefined;
+  /** Custom callees only; built-ins (cn/cva/clsx/…) already cover string args + object keys/values. */
+  callees?: TailwindCallee[] | undefined;
 
   /** Root font size for rem calculations. */
   rootFontSize?: number | undefined;
@@ -24,7 +32,7 @@ export type TailwindOptions = {
 export function tailwind(options: TailwindOptions): FlatConfigArray {
   const {
     entryPoint,
-    callees = ['cn', 'cva'],
+    callees,
     rootFontSize = 16,
     attributes = ['class', 'className', 'ngClass', 'class:list', '[A-Za-z]+ClassName'],
     ignoreClasses,
@@ -41,7 +49,8 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
           entryPoint,
           rootFontSize,
           attributes,
-          callees,
+          // omit by default so the plugin keeps its built-in selectors
+          ...(callees && { callees }),
         },
       },
       rules: {
