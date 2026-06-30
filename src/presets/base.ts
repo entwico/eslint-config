@@ -118,6 +118,15 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // fires on idiomatic nested zod schemas (`z.object({ a: z.array(z.object(...)) })`)
         'unicorn/max-nested-calls': 'off',
+
+        // node servers and frontend roots legitimately run side effects at module top level
+        'unicorn/no-top-level-side-effects': 'off',
+
+        // fights singletons / lazy init (module-scope assignment from inside a function)
+        'unicorn/no-top-level-assignment-in-function': 'off',
+
+        // process.exit is idiomatic in node servers/CLIs (shutdown handlers)
+        'unicorn/no-process-exit': 'off',
       },
     },
 
