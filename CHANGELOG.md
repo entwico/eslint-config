@@ -1,5 +1,22 @@
 # @entwico/eslint-config
 
+## 2.0.0
+
+### Major Changes
+
+- 01b0a87: Astro linting moves to `eslint-plugin-astro` 2 (ESM-only, Node 22+) with `@astroscope/eslint-plugin` 0.4.
+- 01b0a87: React linting is now powered by `@eslint-react/eslint-plugin`, replacing `eslint-plugin-react` and `eslint-plugin-react-hooks`. React rule IDs change from `react/*` and `react-hooks/*` to `@eslint-react/*`, and the `react.reactCompiler` option is removed.
+- 01b0a87: Require ESLint 10. The `eslint` peer dependency is now `^10`.
+
+### Minor Changes
+
+- 01b0a87: `prefer-read-only-props` is no longer enforced on React components — the new React toolchain has no equivalent.
+- 5c38712: upgrade `eslint-plugin-unicorn` to v69 — more recommended rules now fire (e.g. `prefer-observer-apis`, `require-array-sort-compare`, `no-computed-property-existence-check`). The opinionated naming rules stay off: `name-replacements` (renamed from `prevent-abbreviations`), `no-for-each` (renamed from `no-array-for-each`), and `consistent-boolean-name`.
+
+### Patch Changes
+
+- 01b0a87: on pnpm + ESLint 10, `eslint-plugin-jsx-a11y` prints a harmless peer warning; silence it with a `peerDependencyRules` entry until upstream widens its eslint range.
+
 ## 1.7.1
 
 ### Patch Changes
