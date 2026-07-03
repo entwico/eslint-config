@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.6
+
+### Patch Changes
+
+- 21c0bc9: no-excess-jsx-props no longer reports false excess props on discriminated unions with a union-of-literals discriminant
+
 ## 2.0.5
 
 ### Patch Changes
