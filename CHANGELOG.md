@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.7
+
+### Patch Changes
+
+- f88ce72: pin all bundled plugin dependencies to exact versions for reproducible installs
+
 ## 2.0.6
 
 ### Patch Changes
