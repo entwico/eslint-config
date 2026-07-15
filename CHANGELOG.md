@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.0.8
+
+### Patch Changes
+
+- e140212: enforce all `@astroscope/i18n` recommended rules as errors, including `t-static-meta`, which was silently disabled
+
 ## 2.0.7
 
 ### Patch Changes
