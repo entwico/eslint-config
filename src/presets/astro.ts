@@ -13,6 +13,10 @@ const astroscopeRecommendedRules = Object.assign(
     []).map((config) => config.rules ?? {}),
 ) as NonNullable<FlatConfig['rules']>;
 
+// same sourcing for i18n; its `recommended` is a single flat-config object rather than an array
+const i18nRecommendedRules = ((i18nPlugin as { configs?: { recommended?: { rules?: FlatConfig['rules'] } } }).configs
+  ?.recommended?.rules ?? {}) as NonNullable<FlatConfig['rules']>;
+
 export type AstroI18nOptions = {
   /** Attribute names added to the i18n no-raw-strings ignore list. */
   ignoreAttributes?: string[] | undefined;
@@ -85,14 +89,12 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
       files: JS_TS_FILES,
       plugins: { '@astroscope/i18n': i18nPlugin as never },
       rules: {
-        '@astroscope/i18n/t-import-source': 'error',
-        '@astroscope/i18n/no-module-level-t': 'error',
-        '@astroscope/i18n/t-static-key': 'error',
-        '@astroscope/i18n/t-requires-meta': 'warn',
-        '@astroscope/i18n/no-t-reassign': 'error',
-        '@astroscope/i18n/prefer-x-directives': 'error',
+        ...i18nRecommendedRules,
+        // recommended ships these as `warn`; a warning nobody fails on is a rule nobody obeys
+        '@astroscope/i18n/t-static-meta': 'error',
+        '@astroscope/i18n/t-requires-meta': 'error',
         '@astroscope/i18n/no-raw-strings-in-jsx': [
-          'warn',
+          'error',
           { ignoreAttributes: [...DEFAULT_IGNORE_ATTRIBUTES, ...i18nIgnoreAttributes] },
         ],
       },
