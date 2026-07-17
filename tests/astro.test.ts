@@ -39,6 +39,18 @@ describe('astro preset', () => {
     expect(parserOptions?.project).toEqual(['./tsconfig.app.json']);
   });
 
+  it('keeps `project: null` on the virtual-script block so inline <script> TS stays type-service-free', () => {
+    const config = astro({ tsconfigProject: ['./tsconfig.app.json'] });
+    const virtualBlock = config.find(
+      (entry) => Array.isArray(entry.files) && entry.files.includes('**/*.astro/*.ts'),
+    );
+    const parserOptions = virtualBlock?.languageOptions?.parserOptions as { project?: unknown } | undefined;
+
+    expect(virtualBlock).toBeDefined();
+    // overriding this would make type-aware rules throw `requires type information` on inline scripts
+    expect(parserOptions?.project).toBeNull();
+  });
+
   it('enables the @astroscope rules sourced from the plugin recommended config', () => {
     const config = astro();
     const block = config.find((entry) => entry.rules?.['@astroscope/island-readonly'] !== undefined);

@@ -1,21 +1,18 @@
-import astroscopePlugin from '@astroscope/eslint-plugin';
-import i18nPlugin, { DEFAULT_IGNORE_ATTRIBUTES } from '@astroscope/eslint-plugin-i18n';
+import astroscopePlugin, { DEFAULT_IGNORE_ATTRIBUTES, i18nPlugin } from '@astroscope/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import eslintPluginAstro from 'eslint-plugin-astro';
 
 import { JS_TS_FILES } from '../files.js';
 import type { FlatConfig, FlatConfigArray } from '../types.js';
 
-// rule set sourced from the plugin's `recommended` config so new rules arrive on dep bumps
-const astroscopeRecommendedRules = Object.assign(
-  {},
-  ...((astroscopePlugin as { configs?: { recommended?: { rules?: FlatConfig['rules'] }[] } }).configs?.recommended ??
-    []).map((config) => config.rules ?? {}),
-) as NonNullable<FlatConfig['rules']>;
+type PluginConfigs = { configs?: Record<string, { rules?: FlatConfig['rules'] }[]> };
 
-// same sourcing for i18n; its `recommended` is a single flat-config object rather than an array
-const i18nRecommendedRules = ((i18nPlugin as { configs?: { recommended?: { rules?: FlatConfig['rules'] } } }).configs
-  ?.recommended?.rules ?? {}) as NonNullable<FlatConfig['rules']>;
+// rule sets sourced from the plugin's own configs so new rules arrive on dep bumps
+const mergeConfigRules = (configs: { rules?: FlatConfig['rules'] }[] | undefined): NonNullable<FlatConfig['rules']> =>
+  Object.assign({}, ...(configs ?? []).map((config) => config.rules ?? {})) as NonNullable<FlatConfig['rules']>;
+
+const astroscopeRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.recommended);
+const i18nRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.i18n);
 
 export type AstroI18nOptions = {
   /** Attribute names added to the i18n no-raw-strings ignore list. */
@@ -43,9 +40,14 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
   const configs: FlatConfigArray = [
     ...eslintPluginAstro.configs.recommended.map((config) => {
       const languageOptions = config.languageOptions ?? {};
+      const parser =
+        typeof languageOptions === 'object' && 'parser' in languageOptions
+          ? (languageOptions.parser as { meta?: { name?: string } } | undefined)
+          : undefined;
 
-      // only the astro-parser block gets `project`; on .ts/.tsx it clashes with base's `projectService`
-      if (typeof languageOptions !== 'object' || !('parser' in languageOptions) || !languageOptions.parser) {
+      // only the astro-parser block gets `project`; the virtual-script block (`astro/base/typescript`)
+      // deliberately sets `project: null`, and on .ts/.tsx it clashes with base's `projectService`
+      if (parser?.meta?.name !== 'astro-eslint-parser') {
         return config;
       }
 
