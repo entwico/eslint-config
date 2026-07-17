@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.1.0
+
+### Minor Changes
+
+- b5dbfc1: update bundled plugins: eslint-plugin-astro 3, @astroscope/eslint-plugin 1.1
+
 ## 2.0.8
 
 ### Patch Changes
