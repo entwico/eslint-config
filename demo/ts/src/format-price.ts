@@ -13,7 +13,7 @@ const chfFormatter = new Intl.NumberFormat('de-DE', {
 });
 
 export function formatPrice(price: Money, replaceZero = false): string {
-  if (price.value === 0 && replaceZero) {
+  if (replaceZero && price.value === 0) {
     return 'kostenlos';
   }
 
