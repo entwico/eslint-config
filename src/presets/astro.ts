@@ -1,4 +1,5 @@
 import astroscopePlugin, { DEFAULT_IGNORE_ATTRIBUTES, i18nPlugin } from '@astroscope/eslint-plugin';
+import * as astroEslintParser from '@entwico/astro-eslint-parser';
 import tsParser from '@typescript-eslint/parser';
 import eslintPluginAstro from 'eslint-plugin-astro';
 
@@ -24,8 +25,8 @@ export type AstroOptions = {
   i18n?: boolean | AstroI18nOptions | undefined;
 
   /**
-   * tsconfig path(s) for type-aware rules on `.astro`. Defaults to `true` (auto-discovery).
-   * astro-eslint-parser supports `project`, not `projectService`.
+   * tsconfig path(s) for type-aware rules on `.astro`. Defaults to `projectService: true`
+   * (via @entwico/astro-eslint-parser, which shares one tsserver project with .ts/.tsx).
    */
   tsconfigProject?: string | string[] | undefined;
 };
@@ -35,7 +36,8 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
   const { i18n = false, tsconfigProject } = options;
   const i18nEnabled = i18n !== false;
   const i18nIgnoreAttributes = typeof i18n === 'object' ? (i18n.ignoreAttributes ?? []) : [];
-  const astroProject = tsconfigProject ?? true;
+  const astroParserOptions =
+    tsconfigProject === undefined ? { projectService: true } : { project: tsconfigProject };
 
   const configs: FlatConfigArray = [
     ...eslintPluginAstro.configs.recommended.map((config) => {
@@ -58,11 +60,13 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
         ...config,
         languageOptions: {
           ...languageOptions,
+          // the fork adds `projectService` support on top of the original parser
+          parser: astroEslintParser,
           parserOptions: {
             ...parserOptions,
             parser: tsParser,
-            // without `project`, .astro has no type info and type-aware rules silently no-op
-            project: astroProject,
+            // without a project, .astro has no type info and type-aware rules silently no-op
+            ...astroParserOptions,
           },
         },
       };

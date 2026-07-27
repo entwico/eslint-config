@@ -24,19 +24,33 @@ describe('astro preset', () => {
       return typeof lo === 'object' && lo !== null && 'parser' in lo && Boolean(lo.parser);
     });
 
-  it('defaults `project: true` on the astro parser block so type-aware rules get type info', () => {
+  it('defaults `projectService: true` on the astro parser block so type-aware rules get type info', () => {
     const parserBlock = findParserBlock(astro());
-    const parserOptions = parserBlock?.languageOptions?.parserOptions as { project?: unknown } | undefined;
+    const parserOptions = parserBlock?.languageOptions?.parserOptions as
+      | { project?: unknown; projectService?: unknown }
+      | undefined;
 
-    // without this, astro-eslint-parser builds no program and rules like no-excess-jsx-props silently no-op
-    expect(parserOptions?.project).toBe(true);
+    // without this, the parser builds no program and rules like no-excess-jsx-props silently no-op
+    expect(parserOptions?.projectService).toBe(true);
+    expect(parserOptions?.project).toBeUndefined();
   });
 
-  it('forwards tsconfigProject to the astro parser block', () => {
+  it('uses the @entwico/astro-eslint-parser fork on the astro parser block', () => {
+    const parserBlock = findParserBlock(astro());
+    const parser = parserBlock?.languageOptions?.parser as { meta?: { name?: string } } | undefined;
+
+    // the fork adds `projectService` support; the stock parser would warn and downgrade
+    expect(parser?.meta?.name).toBe('@entwico/astro-eslint-parser');
+  });
+
+  it('forwards tsconfigProject to the astro parser block as `project`', () => {
     const parserBlock = findParserBlock(astro({ tsconfigProject: ['./tsconfig.app.json'] }));
-    const parserOptions = parserBlock?.languageOptions?.parserOptions as { project?: unknown } | undefined;
+    const parserOptions = parserBlock?.languageOptions?.parserOptions as
+      | { project?: unknown; projectService?: unknown }
+      | undefined;
 
     expect(parserOptions?.project).toEqual(['./tsconfig.app.json']);
+    expect(parserOptions?.projectService).toBeUndefined();
   });
 
   it('keeps `project: null` on the virtual-script block so inline <script> TS stays type-service-free', () => {

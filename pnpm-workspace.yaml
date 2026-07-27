@@ -6,6 +6,7 @@ minimumReleaseAge: 1440
 
 minimumReleaseAgeExclude:
   - '@astroscope/*'
+  - '@entwico/*'
 
 allowBuilds:
   esbuild: true
