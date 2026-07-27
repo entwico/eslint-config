@@ -1,5 +1,12 @@
 # @entwico/eslint-config
 
+## 2.2.0
+
+### Minor Changes
+
+- 0f10dd4: lint .astro files through the typescript-eslint project service (faster type-aware linting, types resolve across .astro imports)
+- 8e3087f: update bundled eslint-plugin-unicorn to 72 (new recommended rules, incl. prefer-group-by, prefer-iterator-helpers, prefer-then-catch, no-useless-re-export)
+
 ## 2.1.0
 
 ### Minor Changes
