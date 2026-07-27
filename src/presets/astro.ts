@@ -39,8 +39,10 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
   const astroParserOptions =
     tsconfigProject === undefined ? { projectService: true } : { project: tsconfigProject };
 
-  const configs: FlatConfigArray = [
-    ...eslintPluginAstro.configs.recommended.map((config) => {
+  // every plugin config re-ships the `astro/base` block with the stock parser; flat-config
+  // "later wins", so each spread must be mapped or a later duplicate silently restores it
+  const withForkedAstroParser = (pluginConfigs: FlatConfigArray): FlatConfigArray =>
+    pluginConfigs.map((config) => {
       const languageOptions = config.languageOptions ?? {};
       const parser =
         typeof languageOptions === 'object' && 'parser' in languageOptions
@@ -70,9 +72,12 @@ export function astro(options: AstroOptions = {}): FlatConfigArray {
           },
         },
       };
-    }),
+    });
 
-    ...eslintPluginAstro.configs['jsx-a11y-strict'],
+  const configs: FlatConfigArray = [
+    ...withForkedAstroParser(eslintPluginAstro.configs.recommended),
+
+    ...withForkedAstroParser(eslintPluginAstro.configs['jsx-a11y-strict']),
 
     {
       files: JS_TS_FILES,

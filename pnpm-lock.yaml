@@ -83,7 +83,7 @@ importers:
         version: 5.0.4(@types/node@26.1.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(supports-color@7.2.0)(yaml@2.9.0)
       astro:
         specifier: ^6.2.1
-        version: 6.2.1(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@7.2.0)(typescript@5.9.3)(yaml@2.9.0)
+        version: 6.2.1(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@7.2.0)(typescript@6.0.3)(yaml@2.9.0)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -99,7 +99,7 @@ importers:
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.9
-        version: 0.9.9(prettier@3.8.3)(typescript@5.9.3)
+        version: 0.9.9(prettier@3.8.3)(typescript@6.0.3)
       '@entwico/eslint-config':
         specifier: workspace:*
         version: link:../..
@@ -119,8 +119,8 @@ importers:
         specifier: ^4.2.4
         version: 4.2.4
       typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   demo/react:
     dependencies:
@@ -153,8 +153,8 @@ importers:
         specifier: ^4.2.4
         version: 4.2.4
       typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   demo/ts:
     devDependencies:
@@ -168,8 +168,8 @@ importers:
         specifier: ^9.27.0
         version: 9.39.4(jiti@2.7.0)(supports-color@7.2.0)
       typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
 packages:
 
@@ -4128,11 +4128,6 @@ packages:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  typescript@5.9.3:
-    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
     engines: {node: '>=14.17'}
@@ -4586,12 +4581,12 @@ packages:
 
 snapshots:
 
-  '@astrojs/check@0.9.9(prettier@3.8.3)(typescript@5.9.3)':
+  '@astrojs/check@0.9.9(prettier@3.8.3)(typescript@6.0.3)':
     dependencies:
-      '@astrojs/language-server': 2.16.7(prettier@3.8.3)(typescript@5.9.3)
+      '@astrojs/language-server': 2.16.7(prettier@3.8.3)(typescript@6.0.3)
       chokidar: 4.0.3
       kleur: 4.1.5
-      typescript: 5.9.3
+      typescript: 6.0.3
       yargs: 17.7.2
     transitivePeerDependencies:
       - prettier
@@ -4659,12 +4654,12 @@ snapshots:
     dependencies:
       picomatch: 4.0.5
 
-  '@astrojs/language-server@2.16.7(prettier@3.8.3)(typescript@5.9.3)':
+  '@astrojs/language-server@2.16.7(prettier@3.8.3)(typescript@6.0.3)':
     dependencies:
       '@astrojs/compiler': 2.13.1
       '@astrojs/yaml2ts': 0.2.3
       '@jridgewell/sourcemap-codec': 1.5.5
-      '@volar/kit': 2.4.28(typescript@5.9.3)
+      '@volar/kit': 2.4.28(typescript@6.0.3)
       '@volar/language-core': 2.4.28
       '@volar/language-server': 2.4.28
       '@volar/language-service': 2.4.28
@@ -6173,12 +6168,12 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
-  '@volar/kit@2.4.28(typescript@5.9.3)':
+  '@volar/kit@2.4.28(typescript@6.0.3)':
     dependencies:
       '@volar/language-service': 2.4.28
       '@volar/typescript': 2.4.28
       typesafe-path: 0.2.2
-      typescript: 5.9.3
+      typescript: 6.0.3
       vscode-languageserver-textdocument: 1.0.12
       vscode-uri: 3.1.0
 
@@ -6389,8 +6384,8 @@ snapshots:
   astro-eslint-parser@3.0.0(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)(supports-color@7.2.0):
     dependencies:
       '@astrojs/compiler-rs': 0.3.1(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)
-      '@typescript-eslint/scope-manager': 8.64.0
-      '@typescript-eslint/types': 8.64.0
+      '@typescript-eslint/scope-manager': 8.65.0
+      '@typescript-eslint/types': 8.65.0
       debug: 4.4.3(supports-color@7.2.0)
       eslint-scope: 9.1.2
       eslint-visitor-keys: 5.0.1
@@ -6402,7 +6397,7 @@ snapshots:
       - '@emnapi/runtime'
       - supports-color
 
-  astro@6.2.1(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@7.2.0)(typescript@5.9.3)(yaml@2.9.0):
+  astro@6.2.1(@types/node@26.1.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.2)(supports-color@7.2.0)(typescript@6.0.3)(yaml@2.9.0):
     dependencies:
       '@astrojs/compiler': 4.0.0
       '@astrojs/internal-helpers': 0.9.0
@@ -6447,7 +6442,7 @@ snapshots:
       tinyclip: 0.1.12
       tinyexec: 1.1.2
       tinyglobby: 0.2.16
-      tsconfck: 3.1.6(typescript@5.9.3)
+      tsconfck: 3.1.6(typescript@6.0.3)
       ultrahtml: 1.6.0
       unifont: 0.7.4
       unist-util-visit: 5.1.0
@@ -8971,9 +8966,9 @@ snapshots:
 
   ts-pattern@5.9.0: {}
 
-  tsconfck@3.1.6(typescript@5.9.3):
+  tsconfck@3.1.6(typescript@6.0.3):
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.3
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:
@@ -9071,8 +9066,6 @@ snapshots:
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
-
-  typescript@5.9.3: {}
 
   typescript@6.0.3: {}
 

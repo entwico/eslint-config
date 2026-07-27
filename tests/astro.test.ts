@@ -43,6 +43,22 @@ describe('astro preset', () => {
     expect(parser?.meta?.name).toBe('@entwico/astro-eslint-parser');
   });
 
+  it('leaves no block that would restore the stock astro parser (flat-config later-wins)', () => {
+    const parserNames = astro()
+      .map((entry) => {
+        const lo = entry.languageOptions;
+        const parser =
+          typeof lo === 'object' && lo !== null && 'parser' in lo
+            ? (lo.parser as { meta?: { name?: string } } | undefined)
+            : undefined;
+
+        return parser?.meta?.name;
+      })
+      .filter((name) => name === 'astro-eslint-parser');
+
+    expect(parserNames).toEqual([]);
+  });
+
   it('forwards tsconfigProject to the astro parser block as `project`', () => {
     const parserBlock = findParserBlock(astro({ tsconfigProject: ['./tsconfig.app.json'] }));
     const parserOptions = parserBlock?.languageOptions?.parserOptions as
