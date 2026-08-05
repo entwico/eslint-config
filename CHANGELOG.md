@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 2.4.0
+
+### Minor Changes
+
+- 0489c0c: flag `<style>` blocks in Tailwind projects
+
 ## 2.3.0
 
 ### Minor Changes
