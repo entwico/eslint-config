@@ -61,6 +61,16 @@ describe('@entwico/no-style-tag', () => {
     expect(astroRules(code)).toEqual(['@entwico/no-style-tag']);
   });
 
+  it('exempts define:vars, which carries values no class can', () => {
+    const code = '<style define:vars={{ pct: 40 }}>\n  .bar { width: var(--pct) }\n</style>\n';
+    expect(astroRules(code)).toEqual([]);
+  });
+
+  it('still reports other astro directives on a style block', () => {
+    const code = '<style is:global>\n  body { margin: 0 }\n</style>\n';
+    expect(astroRules(code)).toEqual(['@entwico/no-style-tag']);
+  });
+
   it('honours a jsx-comment disable directive inside the astro template', () => {
     const code = [
       '<div class="p-4">a</div>',
