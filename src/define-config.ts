@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { DEFAULT_IGNORES } from './files.js';
 import { astro } from './presets/astro.js';
 import { base } from './presets/base.js';
-import { imports } from './presets/imports.js';
+import { type ImportsOptions, imports } from './presets/imports.js';
 import { react } from './presets/react.js';
 import { stylistic } from './presets/stylistic.js';
 import { type TailwindOptions, tailwind } from './presets/tailwind.js';
@@ -29,6 +29,9 @@ export type DefineConfigOptions = {
 
   /** Enable Tailwind rules. */
   tailwind?: TailwindOptions | undefined;
+
+  /** Import ordering and the re-export ban. Always on; this only tunes it. */
+  imports?: ImportsOptions | undefined;
 
   /** Pin specific tsconfig paths. Defaults to `projectService: true`. */
   tsconfigProject?: string | string[] | undefined;
@@ -70,6 +73,7 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
     react: enableReact = false,
     astro: enableAstro = false,
     tailwind: tailwindOptions,
+    imports: importsOptions,
     tsconfigProject,
     ignores,
     extra = [],
@@ -104,7 +108,7 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
 
       ...(tailwindOptions ? tailwind(tailwindOptions) : []),
 
-      ...imports(),
+      ...imports(importsOptions),
       ...stylistic(),
     ]),
 

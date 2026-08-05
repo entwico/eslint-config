@@ -97,4 +97,30 @@ describe('imports preset', () => {
     const messages = lint(code, imports(), 'a.tsx');
     expect(ruleIds(messages)).not.toContain('import-x/order');
   });
+
+  it('bans re-exports by default', () => {
+    const messages = lint('export { Button } from \'./Button.js\';', imports(), 'a.tsx');
+    expect(ruleIds(messages)).toContain('@entwico/no-reexport');
+  });
+
+  it('can be switched off entirely for library packages', () => {
+    const messages = lint('export { Button } from \'./Button.js\';', imports({ noReexport: false }), 'a.tsx');
+    expect(ruleIds(messages)).not.toContain('@entwico/no-reexport');
+  });
+
+  it('silences unicorn/prefer-export-from, which pushes code into the banned form', () => {
+    const rules = imports()[0]?.rules as Record<string, unknown>;
+    expect(rules['unicorn/prefer-export-from']).toBe('off');
+
+    const kept = imports({ noReexport: false })[0]?.rules as Record<string, unknown>;
+    expect('unicorn/prefer-export-from' in kept).toBe(false);
+  });
+
+  it('exempts the allowed entry-point files only', () => {
+    const config = imports({ noReexport: { allow: ['**/index.ts'] } });
+    const code = 'export { Button } from \'./Button.js\';';
+
+    expect(ruleIds(lint(code, config, 'index.ts'))).not.toContain('@entwico/no-reexport');
+    expect(ruleIds(lint(code, config, 'other.ts'))).toContain('@entwico/no-reexport');
+  });
 });
