@@ -30,6 +30,14 @@ describe('tailwind preset', () => {
     expect((block?.plugins as Record<string, unknown>)['better-tailwindcss']).toBeDefined();
   });
 
+  it('enables the style-tag ban by default and can switch it off', () => {
+    const on = tailwind({ entryPoint: 'src/styles/index.css' })[0]?.rules as Record<string, unknown>;
+    const off = tailwind({ entryPoint: 'src/styles/index.css', noStyleTag: false })[0]?.rules as Record<string, unknown>;
+
+    expect(on['@entwico/no-style-tag']).toBe('error');
+    expect(off['@entwico/no-style-tag']).toBe('off');
+  });
+
   it('forwards allowProperties and can be switched off', () => {
     const allowed = tailwind({
       entryPoint: 'src/styles/index.css',
