@@ -1,6 +1,7 @@
 import tailwindPlugin from 'eslint-plugin-better-tailwindcss';
 
 import { JS_TS_FILES } from '../files.js';
+import { entwicoPlugin } from '../plugin.js';
 import type { FlatConfigArray } from '../types.js';
 
 export type TailwindClassMatcher = {
@@ -26,6 +27,13 @@ export type TailwindOptions = {
 
   /** Class names to ignore in the unknown-class check. */
   ignoreClasses?: string[] | undefined;
+
+  /**
+   * Forbid static inline `style` values, which belong in classes once Tailwind is around.
+   * Dynamic values and CSS custom properties are always allowed.
+   * @default true
+   */
+  noInlineStyle?: boolean | { allowProperties?: string[] | undefined } | undefined;
 };
 
 /** Tailwind CSS linting via eslint-plugin-better-tailwindcss. */
@@ -36,14 +44,20 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
     rootFontSize = 16,
     attributes = ['class', 'className', 'ngClass', 'class:list', '[A-Za-z]+ClassName'],
     ignoreClasses,
+    noInlineStyle = true,
   } = options;
 
   const recommendedConfig = tailwindPlugin.configs.recommended as Record<string, unknown>;
+  const inlineStyleOptions = typeof noInlineStyle === 'object' ? noInlineStyle : {};
 
   return [
     {
       files: JS_TS_FILES,
       ...recommendedConfig,
+      plugins: {
+        ...(recommendedConfig.plugins as Record<string, unknown>),
+        '@entwico': entwicoPlugin,
+      },
       settings: {
         'better-tailwindcss': {
           entryPoint,
@@ -62,6 +76,7 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
         ...(ignoreClasses && {
           'better-tailwindcss/no-unknown-classes': ['error', { ignore: ignoreClasses }],
         }),
+        '@entwico/no-inline-style': noInlineStyle ? ['error', inlineStyleOptions] : 'off',
       },
     },
   ];

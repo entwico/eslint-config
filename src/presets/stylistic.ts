@@ -1,12 +1,8 @@
 import stylisticPlugin from '@stylistic/eslint-plugin';
 
 import { JS_TS_FILES } from '../files.js';
-import { spaceBeforeComment } from '../rules/space-before-comment.js';
+import { entwicoPlugin } from '../plugin.js';
 import type { FlatConfigArray } from '../types.js';
-
-const entwicoPlugin = {
-  rules: { 'space-before-comment': spaceBeforeComment },
-};
 
 export type StylisticOptions = {
   /** Indentation size in spaces. */

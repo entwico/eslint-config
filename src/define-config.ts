@@ -7,7 +7,7 @@ import { base } from './presets/base.js';
 import { imports } from './presets/imports.js';
 import { react } from './presets/react.js';
 import { stylistic } from './presets/stylistic.js';
-import { tailwind } from './presets/tailwind.js';
+import { type TailwindOptions, tailwind } from './presets/tailwind.js';
 import type { FlatConfigArray } from './types.js';
 import { promoteWarnings } from './utils/promote-warnings.js';
 
@@ -28,7 +28,7 @@ export type DefineConfigOptions = {
   astro?: boolean | { i18n?: boolean | { ignoreAttributes?: string[] } } | undefined;
 
   /** Enable Tailwind rules. */
-  tailwind?: { entryPoint: string; ignoreClasses?: string[] } | undefined;
+  tailwind?: TailwindOptions | undefined;
 
   /** Pin specific tsconfig paths. Defaults to `projectService: true`. */
   tsconfigProject?: string | string[] | undefined;
