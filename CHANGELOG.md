@@ -1,5 +1,12 @@
 # @entwico/eslint-config
 
+## 2.3.0
+
+### Minor Changes
+
+- 1f80bce: flag static inline styles in Tailwind projects
+- 92f4c2f: ban re-exports; library entry points can opt out via `imports: { noReexport: { allow: [...] } }`
+
 ## 2.2.1
 
 ### Patch Changes
