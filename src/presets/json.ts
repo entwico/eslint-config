@@ -1,5 +1,3 @@
-import jsonPlugin from '@eslint/json';
-
 import type { FlatConfigArray } from '../types.js';
 
 const COMMON_JSONC_FILES = [
@@ -16,9 +14,15 @@ export type JsonOptions = {
   jsoncFiles?: string[] | undefined;
 };
 
-/** JSON / JSONC / JSON5 linting via @eslint/json. */
-export function json(options: JsonOptions = {}): FlatConfigArray {
+/**
+ * JSON / JSONC / JSON5 linting via \@eslint/json.
+ *
+ * Async so the JSON plugin is only loaded by projects that compose it in.
+ */
+export async function json(options: JsonOptions = {}): Promise<FlatConfigArray> {
   const jsoncFiles = [...COMMON_JSONC_FILES, ...(options.jsoncFiles ?? [])];
+
+  const { default: jsonPlugin } = await import('@eslint/json');
 
   return [
     {

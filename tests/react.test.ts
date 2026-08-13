@@ -4,19 +4,19 @@ import { react } from '../src/presets/react.js';
 import { lint, ruleIds } from './helpers/lint.js';
 
 describe('react preset', () => {
-  it('flags missing alt attribute on img (jsx-a11y)', () => {
+  it('flags missing alt attribute on img (jsx-a11y)', async () => {
     const code = 'export const X = () => <img src="x.png" />;';
-    const messages = lint(code, react(), 'a.tsx');
+    const messages = lint(code, (await react()), 'a.tsx');
     expect(ruleIds(messages)).toContain('jsx-a11y/alt-text');
   });
 
-  it('flags missing key prop in mapped JSX', () => {
+  it('flags missing key prop in mapped JSX', async () => {
     const code = 'export const X = (items) => items.map(i => <li>{i}</li>);';
-    const messages = lint(code, react(), 'a.tsx');
+    const messages = lint(code, (await react()), 'a.tsx');
     expect(ruleIds(messages)).toContain('@eslint-react/no-missing-key');
   });
 
-  it('flags useEffect with missing dependency', () => {
+  it('flags useEffect with missing dependency', async () => {
     const code = [
       'import { useEffect, useState } from \'react\';',
       'export const X = (id) => {',
@@ -25,12 +25,12 @@ describe('react preset', () => {
       '  return null;',
       '};',
     ].join('\n');
-    const messages = lint(code, react(), 'a.tsx');
+    const messages = lint(code, (await react()), 'a.tsx');
     expect(ruleIds(messages)).toContain('@eslint-react/exhaustive-deps');
   });
 
-  it('forwards customEffectHooks to @eslint-react/exhaustive-deps', () => {
-    const configs = react({ customEffectHooks: '(useIsomorphicLayoutEffect)' });
+  it('forwards customEffectHooks to @eslint-react/exhaustive-deps', async () => {
+    const configs = await react({ customEffectHooks: '(useIsomorphicLayoutEffect)' });
     const block = configs.findLast((c) => c.rules?.['@eslint-react/exhaustive-deps'] !== undefined);
     expect(block?.rules?.['@eslint-react/exhaustive-deps']).toEqual([
       'warn',
@@ -38,21 +38,21 @@ describe('react preset', () => {
     ]);
   });
 
-  it('enables react-refresh when reactRefresh: true', () => {
+  it('enables react-refresh when reactRefresh: true', async () => {
     const code = [
       'export const helper = (x) => x + 1;',
       'export const X = () => null;',
     ].join('\n');
-    const messages = lint(code, react({ reactRefresh: true }), 'a.tsx');
+    const messages = lint(code, (await react({ reactRefresh: true })), 'a.tsx');
     expect(ruleIds(messages)).toContain('react-refresh/only-export-components');
   });
 
-  it('does not enable react-refresh by default', () => {
+  it('does not enable react-refresh by default', async () => {
     const code = [
       'export const helper = (x) => x + 1;',
       'export const X = () => null;',
     ].join('\n');
-    const messages = lint(code, react(), 'a.tsx');
+    const messages = lint(code, (await react()), 'a.tsx');
     expect(ruleIds(messages)).not.toContain('react-refresh/only-export-components');
   });
 });

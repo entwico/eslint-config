@@ -1,5 +1,3 @@
-import tailwindPlugin from 'eslint-plugin-better-tailwindcss';
-
 import { JS_TS_FILES } from '../files.js';
 import { entwicoPlugin } from '../plugin.js';
 import type { FlatConfigArray } from '../types.js';
@@ -43,8 +41,12 @@ export type TailwindOptions = {
   noStyleTag?: boolean | undefined;
 };
 
-/** Tailwind CSS linting via eslint-plugin-better-tailwindcss. */
-export function tailwind(options: TailwindOptions): FlatConfigArray {
+/**
+ * Tailwind CSS linting via eslint-plugin-better-tailwindcss.
+ *
+ * Async so the Tailwind plugin is only loaded by projects that enable it.
+ */
+export async function tailwind(options: TailwindOptions): Promise<FlatConfigArray> {
   const {
     entryPoint,
     callees,
@@ -54,6 +56,8 @@ export function tailwind(options: TailwindOptions): FlatConfigArray {
     noInlineStyle = true,
     noStyleTag = true,
   } = options;
+
+  const { default: tailwindPlugin } = await import('eslint-plugin-better-tailwindcss');
 
   const recommendedConfig = tailwindPlugin.configs.recommended as Record<string, unknown>;
   const inlineStyleOptions = typeof noInlineStyle === 'object' ? noInlineStyle : {};

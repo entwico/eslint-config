@@ -57,11 +57,11 @@ const counterProps = { initial: 1, leakedSecret: 'oops' };
 // and the project service must deliver type info to .astro files — a structural check on the
 // preset array cannot catch a later block overriding the parser (flat-config later-wins)
 describe('astro project service integration', () => {
-  const createEslint = () =>
+  const createEslint = async () =>
     new ESLint({
       cwd: demoDir,
       overrideConfigFile: true,
-      overrideConfig: defineConfig({ root: demoDir, astro: true, react: true }) as never,
+      overrideConfig: (await defineConfig({ root: demoDir, astro: true, react: true })) as never,
     });
 
   beforeAll(async () => {
@@ -75,7 +75,8 @@ describe('astro project service integration', () => {
   });
 
   it('resolves the forked parser in the merged config for .astro files', async () => {
-    const config = (await createEslint().calculateConfigForFile(
+    const eslint = await createEslint();
+    const config = (await eslint.calculateConfigForFile(
       path.join(demoDir, 'src/pages/index.astro'),
     )) as { languageOptions?: { parser?: { meta?: { name?: string } } } };
 
@@ -86,7 +87,8 @@ describe('astro project service integration', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     try {
-      const [result] = await createEslint().lintFiles([path.join(fixtureDir, 'check.astro')]);
+      const eslint = await createEslint();
+      const [result] = await eslint.lintFiles([path.join(fixtureDir, 'check.astro')]);
       const ruleIds = (result?.messages ?? []).map((message) => message.ruleId);
 
       expect(ruleIds).toContain('@astroscope/no-excess-jsx-props');

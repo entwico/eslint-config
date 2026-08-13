@@ -1,8 +1,3 @@
-import eslintReact from '@eslint-react/eslint-plugin';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
-import reactRefreshPlugin from 'eslint-plugin-react-refresh';
-import globals from 'globals';
-
 import type { FlatConfig, FlatConfigArray } from '../types.js';
 
 export type ReactOptions = {
@@ -19,14 +14,24 @@ export type ReactOptions = {
   a11yStrict?: boolean | undefined;
 };
 
-/** @eslint-react + jsx-a11y rules. */
-export function react(options: ReactOptions = {}): FlatConfigArray {
+/**
+ * \@eslint-react + jsx-a11y rules.
+ *
+ * Async so the React plugin graph is only loaded by projects that enable it.
+ */
+export async function react(options: ReactOptions = {}): Promise<FlatConfigArray> {
   const {
     files = ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     customEffectHooks,
     reactRefresh = false,
     a11yStrict = true,
   } = options;
+
+  const [{ default: eslintReact }, { default: jsxA11y }, { default: globals }] = await Promise.all([
+    import('@eslint-react/eslint-plugin'),
+    import('eslint-plugin-jsx-a11y'),
+    import('globals'),
+  ]);
 
   // astro's virtual `<name>.astro/<n>.ts` script files have no type service — type-aware rules
   // throw on them, so exclude them (mirrors base's TYPE_AWARE_IGNORES).
@@ -77,6 +82,8 @@ export function react(options: ReactOptions = {}): FlatConfigArray {
   ];
 
   if (reactRefresh) {
+    const { default: reactRefreshPlugin } = await import('eslint-plugin-react-refresh');
+
     configs.push(
       {
         plugins: {

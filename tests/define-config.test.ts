@@ -6,22 +6,22 @@ import { defineConfig } from '../src/define-config.js';
 
 const FIXTURES = join(import.meta.dirname, 'fixtures');
 
-function configHasPlugin(config: ReturnType<typeof defineConfig>, name: string): boolean {
+function configHasPlugin(config: Awaited<ReturnType<typeof defineConfig>>, name: string): boolean {
   return config.some((c) => c.plugins !== undefined && Object.hasOwn(c.plugins, name));
 }
 
-function configHasRule(config: ReturnType<typeof defineConfig>, ruleId: string): boolean {
+function configHasRule(config: Awaited<ReturnType<typeof defineConfig>>, ruleId: string): boolean {
   return config.some((c) => c.rules !== undefined && Object.hasOwn(c.rules, ruleId));
 }
 
 describe('defineConfig', () => {
-  it('returns a non-empty flat-config array', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+  it('returns a non-empty flat-config array', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain') });
     expect(config.length).toBeGreaterThan(0);
   });
 
-  it('always merges DEFAULT_IGNORES with consumer ignores', () => {
-    const config = defineConfig({
+  it('always merges DEFAULT_IGNORES with consumer ignores', async () => {
+    const config = await defineConfig({
       root: join(FIXTURES, 'plain'),
       ignores: ['public/*'],
     });
@@ -31,73 +31,73 @@ describe('defineConfig', () => {
     expect(ignoresBlock?.ignores).toContain('public/*');
   });
 
-  it('applies DEFAULT_IGNORES even when ignores is omitted', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+  it('applies DEFAULT_IGNORES even when ignores is omitted', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain') });
     const ignoresBlock = config.find((c) => 'ignores' in c && Object.keys(c).length === 1);
     expect(ignoresBlock?.ignores).toContain('**/dist/**');
     expect(ignoresBlock?.ignores).toContain('**/.astro/**');
   });
 
-  it('appends extra config blocks at the end', () => {
+  it('appends extra config blocks at the end', async () => {
     const sentinel = { rules: { 'no-debugger': 'error' as const } };
-    const config = defineConfig({
+    const config = await defineConfig({
       root: join(FIXTURES, 'plain'),
       extra: [sentinel],
     });
     expect(config.at(-1)).toBe(sentinel);
   });
 
-  it('does not include react-refresh plugin without vite in deps', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain'), react: true });
+  it('does not include react-refresh plugin without vite in deps', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain'), react: true });
     expect(configHasPlugin(config, 'react-refresh')).toBe(false);
   });
 
-  it('auto-includes react-refresh plugin when vite is in deps', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'with-vite'), react: true });
+  it('auto-includes react-refresh plugin when vite is in deps', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'with-vite'), react: true });
     expect(configHasPlugin(config, 'react-refresh')).toBe(true);
   });
 
-  it('treats explicit undefined the same as omitted (auto-detection still applies)', () => {
-    const config = defineConfig({
+  it('treats explicit undefined the same as omitted (auto-detection still applies)', async () => {
+    const config = await defineConfig({
       root: join(FIXTURES, 'with-vite'),
       react: { reactRefresh: undefined },
     });
     expect(configHasPlugin(config, 'react-refresh')).toBe(true);
   });
 
-  it('lets explicit false override auto-detection', () => {
-    const config = defineConfig({
+  it('lets explicit false override auto-detection', async () => {
+    const config = await defineConfig({
       root: join(FIXTURES, 'with-vite'),
       react: { reactRefresh: false },
     });
     expect(configHasPlugin(config, 'react-refresh')).toBe(false);
   });
 
-  it('does not include astroscope/i18n plugin when @astroscope/i18n is absent', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain'), astro: true });
+  it('does not include astroscope/i18n plugin when @astroscope/i18n is absent', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain'), astro: true });
     expect(configHasPlugin(config, '@astroscope/i18n')).toBe(false);
   });
 
-  it('auto-includes astroscope/i18n plugin when @astroscope/i18n is in deps', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'with-i18n'), astro: true });
+  it('auto-includes astroscope/i18n plugin when @astroscope/i18n is in deps', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'with-i18n'), astro: true });
     expect(configHasPlugin(config, '@astroscope/i18n')).toBe(true);
   });
 
-  it('always includes astroscope core plugin when astro: true', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain'), astro: true });
+  it('always includes astroscope core plugin when astro: true', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain'), astro: true });
     expect(configHasPlugin(config, '@astroscope')).toBe(true);
     expect(configHasRule(config, '@astroscope/no-html-comments')).toBe(true);
     expect(configHasRule(config, '@astroscope/no-excess-jsx-props')).toBe(true);
   });
 
-  it('does not include any astro/astroscope plugin when astro: false', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'with-i18n'), astro: false });
+  it('does not include any astro/astroscope plugin when astro: false', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'with-i18n'), astro: false });
     expect(configHasPlugin(config, '@astroscope')).toBe(false);
     expect(configHasPlugin(config, '@astroscope/i18n')).toBe(false);
   });
 
-  it('always includes base, imports, stylistic, unicorn plugins', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+  it('always includes base, imports, stylistic, unicorn plugins', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain') });
     expect(configHasPlugin(config, '@stylistic')).toBe(true);
     expect(configHasPlugin(config, 'import-x')).toBe(true);
     expect(configHasPlugin(config, 'unicorn')).toBe(true);
@@ -105,14 +105,14 @@ describe('defineConfig', () => {
     expect(configHasRule(config, 'unicorn/no-array-reverse')).toBe(true);
   });
 
-  it('does not auto-enable json plugin', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+  it('does not auto-enable json plugin', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain') });
     expect(configHasPlugin(config, 'json')).toBe(false);
   });
 
-  it('sets tsconfigRootDir to the consumer root', () => {
+  it('sets tsconfigRootDir to the consumer root', async () => {
     const root = join(FIXTURES, 'plain');
-    const config = defineConfig({ root });
+    const config = await defineConfig({ root });
 
     const block = config.find((c) => {
       const opts = c.languageOptions?.parserOptions as { tsconfigRootDir?: string } | undefined;
@@ -123,16 +123,16 @@ describe('defineConfig', () => {
     expect(parserOptions?.tsconfigRootDir).toBe(root);
   });
 
-  it('enables reportUnusedDisableDirectives at error severity', () => {
-    const config = defineConfig({ root: join(FIXTURES, 'plain') });
+  it('enables reportUnusedDisableDirectives at error severity', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain') });
     const block = config.find(
       (c) => c.linterOptions?.reportUnusedDisableDirectives !== undefined,
     );
     expect(block?.linterOptions?.reportUnusedDisableDirectives).toBe('error');
   });
 
-  it('promotes warn-severity rules inside `extra` by default', () => {
-    const config = defineConfig({
+  it('promotes warn-severity rules inside `extra` by default', async () => {
+    const config = await defineConfig({
       root: join(FIXTURES, 'plain'),
       extra: [{ rules: { 'no-debugger': 'warn' } }],
     });
@@ -140,8 +140,8 @@ describe('defineConfig', () => {
     expect(last?.rules?.['no-debugger']).toBe('error');
   });
 
-  it('leaves `extra` severities verbatim when extraPromoteWarnings is false', () => {
-    const config = defineConfig({
+  it('leaves `extra` severities verbatim when extraPromoteWarnings is false', async () => {
+    const config = await defineConfig({
       root: join(FIXTURES, 'plain'),
       extra: [{ rules: { 'no-debugger': 'warn' } }],
       extraPromoteWarnings: false,
@@ -150,8 +150,8 @@ describe('defineConfig', () => {
     expect(last?.rules?.['no-debugger']).toBe('warn');
   });
 
-  it('promotes every shipped warn-severity rule to error', () => {
-    const config = defineConfig({
+  it('promotes every shipped warn-severity rule to error', async () => {
+    const config = await defineConfig({
       root: join(FIXTURES, 'with-vite'),
       react: true,
       astro: { i18n: true },
@@ -166,9 +166,9 @@ describe('defineConfig', () => {
     }
   });
 
-  it('forwards tsconfigProject to the base preset', () => {
+  it('forwards tsconfigProject to the base preset', async () => {
     const root = join(FIXTURES, 'plain');
-    const config = defineConfig({
+    const config = await defineConfig({
       root,
       tsconfigProject: ['./tsconfig.app.json', './tsconfig.node.json'],
     });

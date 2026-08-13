@@ -1,8 +1,3 @@
-import astroscopePlugin, { DEFAULT_IGNORE_ATTRIBUTES, i18nPlugin } from '@astroscope/eslint-plugin';
-import * as astroEslintParser from '@entwico/astro-eslint-parser';
-import tsParser from '@typescript-eslint/parser';
-import eslintPluginAstro from 'eslint-plugin-astro';
-
 import { JS_TS_FILES } from '../files.js';
 import type { FlatConfig, FlatConfigArray } from '../types.js';
 
@@ -11,9 +6,6 @@ type PluginConfigs = { configs?: Record<string, { rules?: FlatConfig['rules'] }[
 // rule sets sourced from the plugin's own configs so new rules arrive on dep bumps
 const mergeConfigRules = (configs: { rules?: FlatConfig['rules'] }[] | undefined): NonNullable<FlatConfig['rules']> =>
   Object.assign({}, ...(configs ?? []).map((config) => config.rules ?? {})) as NonNullable<FlatConfig['rules']>;
-
-const astroscopeRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.recommended);
-const i18nRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.i18n);
 
 export type AstroI18nOptions = {
   /** Attribute names added to the i18n no-raw-strings ignore list. */
@@ -31,10 +23,29 @@ export type AstroOptions = {
   tsconfigProject?: string | string[] | undefined;
 };
 
-/** Astro + @astroscope/eslint-plugin rules. */
-export function astro(options: AstroOptions = {}): FlatConfigArray {
+/**
+ * Astro + \@astroscope/eslint-plugin rules.
+ *
+ * Async so the Astro plugin graph (incl. the forked parser) is only loaded by projects that enable it.
+ */
+export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray> {
   const { i18n = false, tsconfigProject } = options;
   const i18nEnabled = i18n !== false;
+
+  const [
+    { default: astroscopePlugin, DEFAULT_IGNORE_ATTRIBUTES, i18nPlugin },
+    astroEslintParser,
+    { default: tsParser },
+    { default: eslintPluginAstro },
+  ] = await Promise.all([
+    import('@astroscope/eslint-plugin'),
+    import('@entwico/astro-eslint-parser'),
+    import('@typescript-eslint/parser'),
+    import('eslint-plugin-astro'),
+  ]);
+
+  const astroscopeRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.recommended);
+  const i18nRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.i18n);
   const i18nIgnoreAttributes = typeof i18n === 'object' ? (i18n.ignoreAttributes ?? []) : [];
   const astroParserOptions =
     tsconfigProject === undefined ? { projectService: true } : { project: tsconfigProject };

@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { astro } from '../src/presets/astro.js';
 
 describe('astro preset', () => {
-  it('disables unicorn/prefer-module for .astro files only', () => {
-    const config = astro();
+  it('disables unicorn/prefer-module for .astro files only', async () => {
+    const config = await astro();
 
     const block = config.find(
       (entry) =>
@@ -17,15 +17,15 @@ describe('astro preset', () => {
     expect(block, 'expected an .astro-scoped block disabling unicorn/prefer-module').toBeDefined();
   });
 
-  const findParserBlock = (config: ReturnType<typeof astro>) =>
+  const findParserBlock = (config: Awaited<ReturnType<typeof astro>>) =>
     config.find((entry) => {
       const lo = entry.languageOptions;
 
       return typeof lo === 'object' && lo !== null && 'parser' in lo && Boolean(lo.parser);
     });
 
-  it('defaults `projectService: true` on the astro parser block so type-aware rules get type info', () => {
-    const parserBlock = findParserBlock(astro());
+  it('defaults `projectService: true` on the astro parser block so type-aware rules get type info', async () => {
+    const parserBlock = findParserBlock((await astro()));
     const parserOptions = parserBlock?.languageOptions?.parserOptions as
       | { project?: unknown; projectService?: unknown }
       | undefined;
@@ -35,16 +35,17 @@ describe('astro preset', () => {
     expect(parserOptions?.project).toBeUndefined();
   });
 
-  it('uses the @entwico/astro-eslint-parser fork on the astro parser block', () => {
-    const parserBlock = findParserBlock(astro());
+  it('uses the @entwico/astro-eslint-parser fork on the astro parser block', async () => {
+    const parserBlock = findParserBlock((await astro()));
     const parser = parserBlock?.languageOptions?.parser as { meta?: { name?: string } } | undefined;
 
     // the fork adds `projectService` support; the stock parser would warn and downgrade
     expect(parser?.meta?.name).toBe('@entwico/astro-eslint-parser');
   });
 
-  it('leaves no block that would restore the stock astro parser (flat-config later-wins)', () => {
-    const parserNames = astro()
+  it('leaves no block that would restore the stock astro parser (flat-config later-wins)', async () => {
+    const configs = await astro();
+    const parserNames = configs
       .map((entry) => {
         const lo = entry.languageOptions;
         const parser =
@@ -59,8 +60,8 @@ describe('astro preset', () => {
     expect(parserNames).toEqual([]);
   });
 
-  it('forwards tsconfigProject to the astro parser block as `project`', () => {
-    const parserBlock = findParserBlock(astro({ tsconfigProject: ['./tsconfig.app.json'] }));
+  it('forwards tsconfigProject to the astro parser block as `project`', async () => {
+    const parserBlock = findParserBlock((await astro({ tsconfigProject: ['./tsconfig.app.json'] })));
     const parserOptions = parserBlock?.languageOptions?.parserOptions as
       | { project?: unknown; projectService?: unknown }
       | undefined;
@@ -69,8 +70,8 @@ describe('astro preset', () => {
     expect(parserOptions?.projectService).toBeUndefined();
   });
 
-  it('keeps `project: null` on the virtual-script block so inline <script> TS stays type-service-free', () => {
-    const config = astro({ tsconfigProject: ['./tsconfig.app.json'] });
+  it('keeps `project: null` on the virtual-script block so inline <script> TS stays type-service-free', async () => {
+    const config = await astro({ tsconfigProject: ['./tsconfig.app.json'] });
     const virtualBlock = config.find(
       (entry) => Array.isArray(entry.files) && entry.files.includes('**/*.astro/*.ts'),
     );
@@ -81,8 +82,8 @@ describe('astro preset', () => {
     expect(parserOptions?.project).toBeNull();
   });
 
-  it('enables the @astroscope rules sourced from the plugin recommended config', () => {
-    const config = astro();
+  it('enables the @astroscope rules sourced from the plugin recommended config', async () => {
+    const config = await astro();
     const block = config.find((entry) => entry.rules?.['@astroscope/island-readonly'] !== undefined);
 
     expect(block?.rules?.['@astroscope/island-readonly']).toBe('error');

@@ -66,8 +66,13 @@ function readPackageDeps(root: string): Set<string> {
   }
 }
 
-/** Compose the flat config for an Entwico project. */
-export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
+/**
+ * Compose the flat config for an Entwico project.
+ *
+ * Returns a promise — ESLint awaits a config file's default export, so
+ * `export default defineConfig({ … })` needs no change at the call site.
+ */
+export async function defineConfig(options: DefineConfigOptions): Promise<FlatConfigArray> {
   const {
     root,
     react: enableReact = false,
@@ -84,6 +89,25 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
   const astroOpts = typeof enableAstro === 'object' ? enableAstro : {};
   const reactOpts = typeof enableReact === 'object' ? enableReact : {};
 
+  const [astroBlocks, reactBlocks, tailwindBlocks] = await Promise.all([
+    enableAstro
+      ? astro({
+          i18n: deps.has('@astroscope/i18n'),
+          ...(tsconfigProject !== undefined && { tsconfigProject }),
+          ...astroOpts,
+        })
+      : [],
+
+    enableReact
+      ? react({
+          reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
+          ...(reactOpts.customEffectHooks !== undefined && { customEffectHooks: reactOpts.customEffectHooks }),
+        })
+      : [],
+
+    tailwindOptions ? tailwind(tailwindOptions) : [],
+  ]);
+
   return [
     ...promoteWarnings([
       { ignores: [...DEFAULT_IGNORES, ...(ignores ?? [])] },
@@ -91,22 +115,9 @@ export function defineConfig(options: DefineConfigOptions): FlatConfigArray {
 
       ...base({ root, ...(tsconfigProject !== undefined && { tsconfigProject }) }),
 
-      ...(enableAstro
-        ? astro({
-            i18n: deps.has('@astroscope/i18n'),
-            ...(tsconfigProject !== undefined && { tsconfigProject }),
-            ...astroOpts,
-          })
-        : []),
-
-      ...(enableReact
-        ? react({
-            reactRefresh: reactOpts.reactRefresh ?? deps.has('vite'),
-            ...(reactOpts.customEffectHooks !== undefined && { customEffectHooks: reactOpts.customEffectHooks }),
-          })
-        : []),
-
-      ...(tailwindOptions ? tailwind(tailwindOptions) : []),
+      ...astroBlocks,
+      ...reactBlocks,
+      ...tailwindBlocks,
 
       ...imports(importsOptions),
       ...stylistic(),
