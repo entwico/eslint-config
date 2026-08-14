@@ -103,6 +103,15 @@ describe('base preset', () => {
     expect(parserOptions?.project).toBeUndefined();
   });
 
+  it.each([
+    ['no-eval', 'export const x = eval(src);'],
+    ['no-implied-eval', 'setTimeout("alert(1)", 0);'],
+    ['no-new-func', 'export const f = new Function("a", "return a");'],
+    ['no-script-url', 'export const href = "javascript:void(0)";'],
+  ])('enables %s, which no composed recommended set turns on', (rule, code) => {
+    expect(ruleIds(lint(code, withBrowserGlobals(base({ root: ROOT })), 'a.js'))).toContain(rule);
+  });
+
   it('uses an explicit project path when tsconfigProject is provided', () => {
     const config = base({
       root: ROOT,

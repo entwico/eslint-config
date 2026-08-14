@@ -3,6 +3,7 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import tseslint from 'typescript-eslint';
 
 import { JS_TS_FILES } from '../files.js';
+import { entwicoPlugin } from '../plugin.js';
 import type { FlatConfigArray } from '../types.js';
 
 const TYPE_AWARE_FILES = ['**/*.{ts,tsx}'];
@@ -156,6 +157,20 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
             caughtErrorsIgnorePattern: '^_',
           },
         ],
+      },
+    },
+
+    // port from `eslint-plugin-security`, plus the eval family
+    {
+      files: JS_TS_FILES,
+      plugins: { '@entwico': entwicoPlugin },
+      rules: {
+        '@entwico/no-bidi-characters': 'error',
+        '@entwico/no-unsafe-regex': 'error',
+        'no-eval': 'error',
+        'no-implied-eval': 'error',
+        'no-new-func': 'error',
+        'no-script-url': 'error',
       },
     },
 
