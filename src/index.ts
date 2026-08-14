@@ -4,6 +4,7 @@ export { JS_TS_FILES } from './files.js';
 
 export { astro, type AstroOptions } from './presets/astro.js';
 export { base, type BaseOptions } from './presets/base.js';
+export { css, type CssOptions } from './presets/css.js';
 export { imports, type ImportsOptions, type NoReexportOptions } from './presets/imports.js';
 export { json, type JsonOptions } from './presets/json.js';
 export { react, type ReactOptions } from './presets/react.js';

@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { DEFAULT_IGNORES } from './files.js';
 import { astro } from './presets/astro.js';
 import { base } from './presets/base.js';
+import { type CssOptions, css } from './presets/css.js';
 import { type ImportsOptions, imports } from './presets/imports.js';
 import { react } from './presets/react.js';
 import { stylistic } from './presets/stylistic.js';
@@ -29,6 +30,14 @@ export type DefineConfigOptions = {
 
   /** Enable Tailwind rules. */
   tailwind?: TailwindOptions | undefined;
+
+  /**
+   * Lint `.css` files via \@eslint/css. Defaults to on when `tailwind` is
+   * configured — which is the only case where we know the project has
+   * stylesheets — and off otherwise, so a server pays nothing for the language.
+   * Set it explicitly either way.
+   */
+  css?: boolean | CssOptions | undefined;
 
   /** Import ordering and the re-export ban. Always on; this only tunes it. */
   imports?: ImportsOptions | undefined;
@@ -78,6 +87,7 @@ export async function defineConfig(options: DefineConfigOptions): Promise<FlatCo
     react: enableReact = false,
     astro: enableAstro = false,
     tailwind: tailwindOptions,
+    css: enableCss = tailwindOptions !== undefined,
     imports: importsOptions,
     tsconfigProject,
     ignores,
@@ -89,7 +99,9 @@ export async function defineConfig(options: DefineConfigOptions): Promise<FlatCo
   const astroOpts = typeof enableAstro === 'object' ? enableAstro : {};
   const reactOpts = typeof enableReact === 'object' ? enableReact : {};
 
-  const [astroBlocks, reactBlocks, tailwindBlocks] = await Promise.all([
+  const cssOpts = typeof enableCss === 'object' ? enableCss : {};
+
+  const [astroBlocks, reactBlocks, tailwindBlocks, cssBlocks] = await Promise.all([
     enableAstro
       ? astro({
           i18n: deps.has('@astroscope/i18n'),
@@ -106,6 +118,14 @@ export async function defineConfig(options: DefineConfigOptions): Promise<FlatCo
       : [],
 
     tailwindOptions ? tailwind(tailwindOptions) : [],
+
+    enableCss
+      ? css({
+          ...cssOpts,
+          // the css preset needs them to parse `@theme`/`@apply` at all
+          ...(tailwindOptions && !cssOpts.tailwind && { tailwind: tailwindOptions }),
+        })
+      : [],
   ]);
 
   return [
@@ -118,6 +138,7 @@ export async function defineConfig(options: DefineConfigOptions): Promise<FlatCo
       ...astroBlocks,
       ...reactBlocks,
       ...tailwindBlocks,
+      ...cssBlocks,
 
       ...imports(importsOptions),
       ...stylistic(),

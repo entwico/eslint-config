@@ -4,7 +4,8 @@
     "javascriptreact",
     "typescript",
     "typescriptreact",
-    "astro"
+    "astro",
+    "css"
   ],
   "eslint.useFlatConfig": true,
   "eslint.workingDirectories": [

@@ -1,3 +1,5 @@
+import type { Linter } from 'eslint';
+
 import { JS_TS_FILES } from '../files.js';
 import { entwicoPlugin } from '../plugin.js';
 import type { FlatConfigArray } from '../types.js';
@@ -39,6 +41,9 @@ export type TailwindOptions = {
    * @default true
    */
   noStyleTag?: boolean | undefined;
+
+  /** Tailwind major the CSS custom syntax is taken from. @default 4 */
+  version?: 3 | 4 | undefined;
 };
 
 /**
@@ -47,50 +52,80 @@ export type TailwindOptions = {
  * Async so the Tailwind plugin is only loaded by projects that enable it.
  */
 export async function tailwind(options: TailwindOptions): Promise<FlatConfigArray> {
+  const { noInlineStyle = true, noStyleTag = true } = options;
+
+  const { plugins, settings, rules } = await tailwindCssContribution(options);
+  const inlineStyleOptions = typeof noInlineStyle === 'object' ? noInlineStyle : {};
+
+  return [
+    {
+      files: JS_TS_FILES,
+      plugins: {
+        ...plugins,
+        '@entwico': entwicoPlugin,
+      },
+      settings,
+      rules: {
+        ...rules,
+        '@entwico/no-inline-style': noInlineStyle ? ['error', inlineStyleOptions] : 'off',
+        '@entwico/no-style-tag': noStyleTag ? 'error' : 'off',
+      },
+    },
+  ];
+}
+
+/**
+ * The parts of the Tailwind setup that are language-agnostic, so the `css`
+ * preset can layer them onto its own block: `@apply` is the one place outside
+ * markup where Tailwind classes live, and better-tailwindcss reads them from an
+ * `Atrule` node with the same rules and settings it uses on markup.
+ */
+export async function tailwindCssContribution(options: TailwindOptions): Promise<{
+  plugins: Record<string, unknown>;
+  settings: Record<string, unknown>;
+  rules: Linter.RulesRecord;
+  syntax: unknown;
+}> {
   const {
     entryPoint,
     callees,
     rootFontSize = 16,
     attributes = ['class', 'className', 'ngClass', 'class:list', '[A-Za-z]+ClassName'],
     ignoreClasses,
-    noInlineStyle = true,
-    noStyleTag = true,
+    version = 4,
   } = options;
 
-  const { default: tailwindPlugin } = await import('eslint-plugin-better-tailwindcss');
+  const [{ default: tailwindPlugin }, { tailwind3, tailwind4 }] = await Promise.all([
+    import('eslint-plugin-better-tailwindcss'),
+    import('tailwind-csstree'),
+  ]);
 
   const recommendedConfig = tailwindPlugin.configs.recommended as Record<string, unknown>;
-  const inlineStyleOptions = typeof noInlineStyle === 'object' ? noInlineStyle : {};
 
-  return [
-    {
-      files: JS_TS_FILES,
-      ...recommendedConfig,
-      plugins: {
-        ...(recommendedConfig.plugins as Record<string, unknown>),
-        '@entwico': entwicoPlugin,
-      },
-      settings: {
-        'better-tailwindcss': {
-          entryPoint,
-          rootFontSize,
-          attributes,
-          // omit by default so the plugin keeps its built-in selectors
-          ...(callees && { callees }),
-        },
-      },
-      rules: {
-        ...(recommendedConfig.rules as Record<string, unknown>),
-        'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
-        'better-tailwindcss/enforce-shorthand-classes': 'off',
-        'better-tailwindcss/enforce-consistent-important-position': 'off',
-        'better-tailwindcss/enforce-consistent-variable-syntax': 'off',
-        ...(ignoreClasses && {
-          'better-tailwindcss/no-unknown-classes': ['error', { ignore: ignoreClasses }],
-        }),
-        '@entwico/no-inline-style': noInlineStyle ? ['error', inlineStyleOptions] : 'off',
-        '@entwico/no-style-tag': noStyleTag ? 'error' : 'off',
+  return {
+    plugins: recommendedConfig.plugins as Record<string, unknown>,
+
+    settings: {
+      'better-tailwindcss': {
+        entryPoint,
+        rootFontSize,
+        attributes,
+        // omit by default so the plugin keeps its built-in selectors
+        ...(callees && { callees }),
       },
     },
-  ];
+
+    rules: {
+      ...(recommendedConfig.rules as Linter.RulesRecord),
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+      'better-tailwindcss/enforce-shorthand-classes': 'off',
+      'better-tailwindcss/enforce-consistent-important-position': 'off',
+      'better-tailwindcss/enforce-consistent-variable-syntax': 'off',
+      ...(ignoreClasses && {
+        'better-tailwindcss/no-unknown-classes': ['error', { ignore: ignoreClasses }],
+      }),
+    },
+
+    syntax: version === 3 ? tailwind3 : tailwind4,
+  };
 }

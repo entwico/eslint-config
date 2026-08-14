@@ -105,6 +105,44 @@ describe('defineConfig', () => {
     expect(configHasRule(config, 'unicorn/no-array-reverse')).toBe(true);
   });
 
+  it('leaves css off for a project with no tailwind, so the language is never loaded', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain') });
+
+    expect(config.some((c) => c.language === 'css/css')).toBe(false);
+  });
+
+  it('enables css alongside tailwind, and hands it the tailwind options', async () => {
+    const config = await defineConfig({
+      root: join(FIXTURES, 'plain'),
+      tailwind: { entryPoint: 'src/styles/index.css' },
+    });
+    const cssBlock = config.find((c) => c.language === 'css/css');
+
+    expect(cssBlock).toBeDefined();
+    expect((cssBlock?.languageOptions as Record<string, unknown>).customSyntax).toBeDefined();
+    expect(Object.hasOwn(cssBlock?.rules ?? {}, 'better-tailwindcss/no-unknown-classes')).toBe(true);
+  });
+
+  it('takes css on its own, without tailwind', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain'), css: true });
+    const cssBlock = config.find((c) => c.language === 'css/css');
+
+    expect(Object.hasOwn(cssBlock?.rules ?? {}, 'css/no-duplicate-imports')).toBe(true);
+    expect(Object.hasOwn(cssBlock?.rules ?? {}, 'better-tailwindcss/no-unknown-classes')).toBe(false);
+    expect((cssBlock?.languageOptions as Record<string, unknown>).customSyntax).toBeUndefined();
+  });
+
+  it('lets a tailwind project opt out of css linting', async () => {
+    const config = await defineConfig({
+      root: join(FIXTURES, 'plain'),
+      tailwind: { entryPoint: 'src/styles/index.css' },
+      css: false,
+    });
+
+    expect(config.some((c) => c.language === 'css/css')).toBe(false);
+    expect(configHasPlugin(config, 'better-tailwindcss')).toBe(true);
+  });
+
   it('does not auto-enable json plugin', async () => {
     const config = await defineConfig({ root: join(FIXTURES, 'plain') });
     expect(configHasPlugin(config, 'json')).toBe(false);
