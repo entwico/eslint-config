@@ -1,5 +1,20 @@
 # @entwico/eslint-config
 
+## 3.0.0
+
+### Major Changes
+
+- bfa0a9f: presets load their plugins only when enabled
+
+### Minor Changes
+
+- e90315c: flag bidi control characters, ReDoS-prone regexes and eval-style code
+- 1fe7dc8: new `css` option lints stylesheets — general CSS correctness, plus Tailwind classes inside `@apply` when Tailwind is configured
+
+### Patch Changes
+
+- b61b397: allow `<style define:vars>` blocks in Astro
+
 ## 2.4.0
 
 ### Minor Changes
