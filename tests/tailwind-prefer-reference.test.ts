@@ -62,6 +62,15 @@ describe('@entwico/tailwind-prefer-reference', () => {
     expect(await firing('.embed { display: flex; }')).toHaveLength(1);
   });
 
+  it('exempts files the entry imports, and still reports files outside the graph', async () => {
+    const root = `${process.cwd()}/tests/fixtures/tw-graph`;
+    const config = await css({ root, tailwind: { entryPoint: 'entry.css' } });
+    const code = '.thing { display: flex; }';
+
+    expect(lint(code, config, `${root}/imported.css`).filter((m) => m.ruleId === RULE)).toEqual([]);
+    expect(lint(code, config, `${root}/standalone.css`).filter((m) => m.ruleId === RULE)).toHaveLength(1);
+  });
+
   it('is not registered without tailwind options', async () => {
     expect(await firing('.embed { margin: 6.5px 0; }', {})).toEqual([]);
   });

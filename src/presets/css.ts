@@ -104,7 +104,12 @@ export async function css(options: CssOptions = {}): Promise<FlatConfigArray> {
         ...tailwindBits?.rules,
 
         ...(tailwindOptions && tailwindBits && {
-          '@entwico/tailwind-prefer-apply': preferApply ? ['error', preferApplyOptions] as Linter.RuleEntry : 'off',
+          '@entwico/tailwind-prefer-apply': preferApply
+            ? [
+                'error',
+                { ...preferApplyOptions, entryPoint: tailwindOptions.entryPoint, ...(root && { root }) },
+              ] as Linter.RuleEntry
+            : 'off',
           '@entwico/tailwind-prefer-reference': [
             'error',
             { entryPoint: tailwindOptions.entryPoint, ...(root && { root }) },

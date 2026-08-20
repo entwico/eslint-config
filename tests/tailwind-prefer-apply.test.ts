@@ -112,6 +112,15 @@ describe('@entwico/tailwind-prefer-apply', () => {
     expect(lintFix(code, await css({ tailwind: TAILWIND }), 'a.css')).toBe(code);
   });
 
+  it('reports in files the entry imports, where @apply resolves without a marker', async () => {
+    const root = `${process.cwd()}/tests/fixtures/tw-graph`;
+    const config = await css({ root, tailwind: { entryPoint: 'entry.css' } });
+    const code = '.thing { display: flex; }';
+
+    expect(lint(code, config, `${root}/imported.css`).filter((m) => m.ruleId === RULE)).toHaveLength(1);
+    expect(lint(code, config, `${root}/standalone.css`).filter((m) => m.ruleId === RULE)).toEqual([]);
+  });
+
   it('is not registered without tailwind options', async () => {
     const entry = '@import "tailwindcss";\n.card { display: flex; }';
 

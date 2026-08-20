@@ -1,9 +1,11 @@
 import type { Rule } from 'eslint';
 
-import { type CssNode, enablesApply, isExpressibleDeclaration } from '../utils/css-apply.js';
+import { type CssNode, enablesApply, isExpressibleDeclaration, tailwindImportGraph } from '../utils/css-apply.js';
 
 type Options = {
   allowProperties?: string[] | undefined;
+  entryPoint?: string | undefined;
+  root?: string | undefined;
 };
 
 /**
@@ -20,9 +22,10 @@ function arbitraryProperty(property: string, value: string, important: boolean):
 
 /**
  * Prefer `@apply` over raw declarations in stylesheets where Tailwind is
- * reachable — the entry (`@import "tailwindcss"`) and `@reference`-d files.
+ * reachable — the entry, `@reference`-d files, and anything the entry
+ * `@import`s (Tailwind compiles that tree as one unit).
  *
- * A file with neither marker cannot resolve `@apply`, so raw declarations are
+ * A file outside all of those cannot resolve `@apply`, so raw declarations are
  * its only form and the rule stays silent. Custom properties and descriptor
  * contexts (`@keyframes`, `@font-face`, `@theme`, …) are never reported: no
  * class can express them.
@@ -37,6 +40,8 @@ export const tailwindPreferApply: Rule.RuleModule = {
         type: 'object',
         properties: {
           allowProperties: { type: 'array', items: { type: 'string' } },
+          entryPoint: { type: 'string' },
+          root: { type: 'string' },
         },
         additionalProperties: false,
       },
@@ -47,11 +52,12 @@ export const tailwindPreferApply: Rule.RuleModule = {
     },
   },
   create(context) {
-    const { allowProperties = [] } = (context.options[0] ?? {}) as Options;
+    const { allowProperties = [], entryPoint, root } = (context.options[0] ?? {}) as Options;
     const allowed = new Set(allowProperties.map((name) => name.toLowerCase()));
     const { sourceCode } = context;
 
-    let applyResolvable = false;
+    let applyResolvable = entryPoint !== undefined &&
+      tailwindImportGraph(entryPoint, root ?? process.cwd()).has(context.filename);
 
     return {
       Atrule(node: CssNode) {
