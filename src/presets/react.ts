@@ -1,4 +1,5 @@
 import type { FlatConfig, FlatConfigArray } from '../types.js';
+import { loadA11y } from '../utils/a11y.js';
 
 export type ReactOptions = {
   /** File patterns to apply React rules to. */
@@ -27,10 +28,10 @@ export async function react(options: ReactOptions = {}): Promise<FlatConfigArray
     a11yStrict = true,
   } = options;
 
-  const [{ default: eslintReact }, { default: jsxA11y }, { default: globals }] = await Promise.all([
+  const [{ default: eslintReact }, { default: globals }, a11y] = await Promise.all([
     import('@eslint-react/eslint-plugin'),
-    import('eslint-plugin-jsx-a11y'),
     import('globals'),
+    loadA11y(),
   ]);
 
   // astro's virtual `<name>.astro/<n>.ts` script files have no type service — type-aware rules
@@ -48,7 +49,7 @@ export async function react(options: ReactOptions = {}): Promise<FlatConfigArray
   const configs: FlatConfigArray = [
     {
       plugins: {
-        'jsx-a11y': jsxA11y,
+        'jsx-a11y': a11y.plugin,
       },
     },
 
@@ -76,7 +77,7 @@ export async function react(options: ReactOptions = {}): Promise<FlatConfigArray
     {
       files,
       rules: {
-        ...jsxA11y.flatConfigs[a11yStrict ? 'strict' : 'recommended'].rules,
+        ...(a11yStrict ? a11y.strictRules : a11y.recommendedRules),
       },
     },
   ];

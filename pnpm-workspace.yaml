@@ -15,5 +15,4 @@ allowBuilds:
 
 peerDependencyRules:
   allowedVersions:
-    'eslint-plugin-jsx-a11y>eslint': '10' # works fine on v10
     'tsconfck>typescript': '6' # demo deps are on ts 6; tsconfck only parses tsconfig files

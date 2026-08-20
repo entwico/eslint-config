@@ -1,5 +1,6 @@
 import { JS_TS_FILES } from '../files.js';
 import type { FlatConfig, FlatConfigArray } from '../types.js';
+import { loadA11y } from '../utils/a11y.js';
 
 type PluginConfigs = { configs?: Record<string, { rules?: FlatConfig['rules'] }[]> };
 
@@ -37,11 +38,13 @@ export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray
     astroEslintParser,
     { default: tsParser },
     { default: eslintPluginAstro },
+    a11y,
   ] = await Promise.all([
     import('@astroscope/eslint-plugin'),
     import('@entwico/astro-eslint-parser'),
     import('@typescript-eslint/parser'),
     import('eslint-plugin-astro'),
+    loadA11y(),
   ]);
 
   const astroscopeRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.recommended);
@@ -88,7 +91,15 @@ export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray
   const configs: FlatConfigArray = [
     ...withForkedAstroParser(eslintPluginAstro.configs.recommended),
 
-    ...withForkedAstroParser(eslintPluginAstro.configs['jsx-a11y-strict']),
+    // wrapper around eslint-plugin-jsx-a11y-x
+    {
+      plugins: { 'jsx-a11y': a11y.plugin },
+    },
+
+    {
+      files: ['**/*.astro'],
+      rules: a11y.strictRules,
+    },
 
     {
       files: JS_TS_FILES,
