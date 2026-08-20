@@ -9,6 +9,11 @@ export function lint(code: string, config: FlatConfigArray, filename: string): L
   return linter.verify(code, config, filename);
 }
 
+/** Run ESLint's fix-until-done loop and return the fixed text. */
+export function lintFix(code: string, config: FlatConfigArray, filename: string): string {
+  return linter.verifyAndFix(code, config, filename).output;
+}
+
 /** Extract rule IDs from messages, dropping nulls (parse errors etc.). */
 export function ruleIds(messages: Linter.LintMessage[]): string[] {
   return messages.map((m) => m.ruleId).filter((id): id is string => id !== null);

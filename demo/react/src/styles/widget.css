@@ -1,0 +1,14 @@
+/* a separate stylesheet, e.g. vendor */
+@reference './index.css';
+
+.widget-panel {
+  @apply flex flex-col gap-6 rounded-sm bg-white p-4;
+}
+
+.widget-title {
+  @apply text-lg font-medium text-brand max-md:text-base;
+}
+
+.widget-cta {
+  @apply block h-13 w-full rounded-sm bg-brand! text-white select-none [-webkit-user-drag:none];
+}

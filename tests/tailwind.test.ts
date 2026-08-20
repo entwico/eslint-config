@@ -30,15 +30,10 @@ describe('tailwind preset', () => {
     expect((block?.plugins as Record<string, unknown>)['better-tailwindcss']).toBeDefined();
   });
 
-  it('enables the style-tag ban by default and can switch it off', async () => {
-    const onBlocks = await tailwind({ entryPoint: 'src/styles/index.css' });
-    const offBlocks = await tailwind({ entryPoint: 'src/styles/index.css', noStyleTag: false });
+  it('always enables the style-tag ban', async () => {
+    const blocks = await tailwind({ entryPoint: 'src/styles/index.css' });
 
-    const on = onBlocks[0]?.rules as Record<string, unknown>;
-    const off = offBlocks[0]?.rules as Record<string, unknown>;
-
-    expect(on['@entwico/no-style-tag']).toBe('error');
-    expect(off['@entwico/no-style-tag']).toBe('off');
+    expect((blocks[0]?.rules as Record<string, unknown>)['@entwico/no-style-tag']).toBe('error');
   });
 
   it('forwards allowProperties and can be switched off', async () => {

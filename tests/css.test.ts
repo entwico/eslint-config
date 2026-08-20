@@ -116,6 +116,15 @@ describe('css preset', () => {
     expect(messages.some((message) => message.fatal)).toBe(false);
   });
 
+  it('does not crash on var() inside an at-rule prelude', async () => {
+    const config = await css({ tailwind: TAILWIND });
+
+    expect(ruleIds(lint('.a { @apply [color:var(--brand)]; }', config, 'a.css')))
+      .not.toContain('css/no-invalid-at-rules');
+    expect(ruleIds(lint('@media (min-width: var(--bp)) { .a { color: red; } }', await css(), 'a.css')))
+      .not.toContain('css/no-invalid-at-rules');
+  });
+
   it('still reports at-rules that are genuinely unknown', async () => {
     expect(ruleIds(lint('.a { @applyy flex; }', await css({ tailwind: TAILWIND }), 'a.css')))
       .toContain('css/no-invalid-at-rules');

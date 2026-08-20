@@ -37,11 +37,12 @@ export type TailwindOptions = {
   noInlineStyle?: boolean | { allowProperties?: string[] | undefined } | undefined;
 
   /**
-   * Forbid `<style>` blocks. Blunt on purpose — disable it on the block
-   * (`eslint-disable-next-line`) for keyframes, media queries and global resets.
+   * Prefer `@apply` over raw declarations in stylesheets where `@apply` is
+   * resolvable — the Tailwind entry and `@reference`-d files; files with
+   * neither marker are never reported.
    * @default true
    */
-  noStyleTag?: boolean | undefined;
+  preferApply?: boolean | { allowProperties?: string[] | undefined } | undefined;
 
   /** Tailwind major the CSS custom syntax is taken from. @default 4 */
   version?: 3 | 4 | undefined;
@@ -53,7 +54,7 @@ export type TailwindOptions = {
  * Async so the Tailwind plugin is only loaded by projects that enable it.
  */
 export async function tailwind(options: TailwindOptions): Promise<FlatConfigArray> {
-  const { noInlineStyle = true, noStyleTag = true } = options;
+  const { noInlineStyle = true } = options;
 
   const { plugins, settings, rules } = await tailwindCssContribution(options);
   const inlineStyleOptions = typeof noInlineStyle === 'object' ? noInlineStyle : {};
@@ -69,7 +70,9 @@ export async function tailwind(options: TailwindOptions): Promise<FlatConfigArra
       rules: {
         ...rules,
         '@entwico/no-inline-style': noInlineStyle ? ['error', inlineStyleOptions] : 'off',
-        '@entwico/no-style-tag': noStyleTag ? 'error' : 'off',
+        // blunt on purpose — disable on the block (eslint-disable-next-line)
+        // for keyframes, media queries and global resets
+        '@entwico/no-style-tag': 'error',
       },
     },
   ];
@@ -78,16 +81,28 @@ export async function tailwind(options: TailwindOptions): Promise<FlatConfigArra
 type CsstreeSyntaxExtension = typeof tailwind4;
 
 /**
- * The stock `@apply` prelude grammar rejects real classes (`text-[52px]/[1.05]`,
- * `text-(--brand)`); better-tailwindcss already validates them on the same node,
- * so accept any prelude.
+ * Fixes on top of tailwind-csstree: accept any `@apply` prelude (the stock
+ * grammar rejects real classes; better-tailwindcss validates them anyway) and
+ * parse `@utility` bodies as style blocks (rule-list mode mangles mixed
+ * declarations + nested rules).
  */
-function relaxApplyPrelude(base: CsstreeSyntaxExtension): CsstreeSyntaxExtension {
+function adjustTailwindSyntax(base: CsstreeSyntaxExtension): CsstreeSyntaxExtension {
   return (prev) => {
     const config = base(prev);
 
     return {
       ...config,
+      atrule: {
+        ...(config as { atrule?: Record<string, unknown> }).atrule,
+        utility: {
+          parse: {
+            block(this: { Block: (isStyleBlock: boolean, options: { allowNestedRules: boolean }) => unknown }) {
+              // eslint-disable-next-line unicorn/no-this-outside-of-class -- csstree parser context method
+              return this.Block(true, { allowNestedRules: true });
+            },
+          },
+        } as never,
+      },
       atrules: {
         ...config.atrules,
         apply: { prelude: '<any-value>' },
@@ -148,6 +163,6 @@ export async function tailwindCssContribution(options: TailwindOptions): Promise
       }),
     },
 
-    syntax: relaxApplyPrelude(version === 3 ? tailwind3 : tailwind4),
+    syntax: adjustTailwindSyntax(version === 3 ? tailwind3 : tailwind4),
   };
 }

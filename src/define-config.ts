@@ -121,6 +121,7 @@ export async function defineConfig(options: DefineConfigOptions): Promise<FlatCo
 
     enableCss
       ? css({
+          root,
           ...cssOpts,
           // the css preset needs them to parse `@theme`/`@apply` at all
           ...(tailwindOptions && !cssOpts.tailwind && { tailwind: tailwindOptions }),

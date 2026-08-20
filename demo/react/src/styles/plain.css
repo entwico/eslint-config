@@ -1,0 +1,23 @@
+/* eslint-disable @entwico/tailwind-prefer-reference -- plain, outside tailwind */
+.embed-frame {
+  margin: 6.5px 0 13px;
+  border: 1px solid rgb(45 103 171);
+  border-radius: 3px;
+}
+
+.embed-frame img {
+  max-width: 100%;
+  height: auto;
+}
+
+@keyframes embed-fade {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
