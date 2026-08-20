@@ -1,3 +1,4 @@
+import { astroNoClassList } from './rules/astro-no-class-list.js';
 import { noBidiCharacters } from './rules/no-bidi-characters.js';
 import { noInlineStyle } from './rules/no-inline-style.js';
 import { noReexport } from './rules/no-reexport.js';
@@ -18,6 +19,7 @@ export const entwicoPlugin = {
   rules: {
     'space-before-comment': spaceBeforeComment,
     'no-bidi-characters': noBidiCharacters,
+    'astro-no-class-list': astroNoClassList,
     'no-inline-style': noInlineStyle,
     'no-reexport': noReexport,
     'no-style-tag': noStyleTag,

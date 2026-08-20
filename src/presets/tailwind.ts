@@ -73,6 +73,7 @@ export async function tailwind(options: TailwindOptions): Promise<FlatConfigArra
         // blunt on purpose — disable on the block (eslint-disable-next-line)
         // for keyframes, media queries and global resets
         '@entwico/no-style-tag': 'error',
+        '@entwico/astro-no-class-list': 'error',
       },
     },
   ];

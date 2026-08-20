@@ -30,10 +30,12 @@ describe('tailwind preset', () => {
     expect((block?.plugins as Record<string, unknown>)['better-tailwindcss']).toBeDefined();
   });
 
-  it('always enables the style-tag ban', async () => {
+  it('always enables the style-tag and class:list bans', async () => {
     const blocks = await tailwind({ entryPoint: 'src/styles/index.css' });
+    const rules = blocks[0]?.rules as Record<string, unknown>;
 
-    expect((blocks[0]?.rules as Record<string, unknown>)['@entwico/no-style-tag']).toBe('error');
+    expect(rules['@entwico/no-style-tag']).toBe('error');
+    expect(rules['@entwico/astro-no-class-list']).toBe('error');
   });
 
   it('forwards allowProperties and can be switched off', async () => {
