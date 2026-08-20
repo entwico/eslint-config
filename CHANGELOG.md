@@ -1,5 +1,23 @@
 # @entwico/eslint-config
 
+## 4.0.0
+
+### Major Changes
+
+- c524186: `css/use-baseline` is disabled and the `css.baseline` option is removed
+- 919e184: a11y is now powered by `eslint-plugin-jsx-a11y-x`; the `'eslint-plugin-jsx-a11y>eslint': '10'` allowedVersions workaround can be removed from consumer `pnpm-workspace.yaml`s
+
+### Minor Changes
+
+- e942d1a: new `@entwico/tailwind-prefer-apply` rule: raw declarations are reported in stylesheets where `@apply` can resolve (the Tailwind entry and `@reference`-d files), with an autofix to the output-identical arbitrary-property class that `enforce-canonical-classes` then upgrades to named utilities in the same `--fix` run
+- e942d1a: new `@entwico/tailwind-apply-once` rule: multiple `@apply` at-rules in one block are reported; consecutive runs autofix into a single `@apply`
+- e942d1a: new `@entwico/tailwind-prefer-reference` rule: stylesheets with class-expressible styling but no `@reference`/entry import are asked to reference the tailwind entry (once per file), with an autofix inserting `@reference` with the correct relative path
+
+### Patch Changes
+
+- c524186: stop reporting `@apply` preludes with arbitrary values, slash modifiers, or the var shorthand as invalid at-rules
+- e942d1a: at-rule preludes containing `var()`/`env()` (e.g. `@apply [color:var(--x)]`) no longer crash `css/no-invalid-at-rules`
+
 ## 3.0.0
 
 ### Major Changes
