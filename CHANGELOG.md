@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 4.0.1
+
+### Patch Changes
+
+- babb207: `tailwind-prefer-reference` no longer asks stylesheets the tailwind entry `@import`s to `@reference` it back — that fixed the build into a recursion error; `tailwind-prefer-apply` now covers those files instead
+
 ## 4.0.0
 
 ### Major Changes
