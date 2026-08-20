@@ -67,19 +67,16 @@ describe('css preset', () => {
     expect(ruleIds(lint('.a { color: red; }', config, 'a.css'))).not.toContain('css/no-invalid-properties');
   });
 
-  it('runs use-baseline at the newly-available bar, which passes modern-but-settled CSS', async () => {
-    const settled = '.a { color: light-dark(white, black); scrollbar-gutter: stable; }';
+  // suppression-on-every-legal-use: unguarded progressive enhancement is the
+  // normal pattern, and the rule cannot see -webkit- fallbacks
+  it('never runs use-baseline', async () => {
+    const modern = [
+      '.a { text-wrap: pretty; }',
+      'img { -webkit-user-select: none; user-select: none; -webkit-user-drag: none; }',
+    ].join('\n');
 
-    expect(cssRules(await css())['css/use-baseline']).toEqual(['error', { available: 'newly' }]);
-    expect(ruleIds(lint(settled, await css(), 'a.css'))).not.toContain('css/use-baseline');
-    expect(ruleIds(lint(settled, await css({ baseline: 'widely' }), 'a.css'))).toContain('css/use-baseline');
-  });
-
-  it('still reports genuinely unsettled CSS at that bar, and goes quiet when switched off', async () => {
-    const unsettled = '.a { text-wrap: pretty; }';
-
-    expect(ruleIds(lint(unsettled, await css(), 'a.css'))).toContain('css/use-baseline');
-    expect(ruleIds(lint(unsettled, await css({ baseline: false }), 'a.css'))).not.toContain('css/use-baseline');
+    expect(cssRules(await css())['css/use-baseline']).toBe('off');
+    expect(ruleIds(lint(modern, await css(), 'a.css'))).toEqual([]);
   });
 
   it('rejects tailwind at-rules without tailwind options', async () => {
@@ -104,6 +101,26 @@ describe('css preset', () => {
     expect(messages.some((message) => message.fatal)).toBe(false);
   });
 
+  // the stock grammar rejects these one shape at a time; class validation is
+  // better-tailwindcss's job, so the @apply prelude accepts anything
+  it('accepts every real candidate shape inside @apply', async () => {
+    const code = [
+      '@utility cr-h1 { @apply font-serif text-[52px]/[1.05] font-medium tracking-[-0.02em]; }',
+      '@utility cr-body { @apply text-[14px]/[1.55] text-(--cr-ink-2); }',
+      '.a { @apply hover:bg-red-500 md:[&>*]:flex-1 bg-blue-500!; }',
+    ].join('\n');
+
+    const messages = lint(code, await css({ tailwind: TAILWIND }), 'a.css');
+
+    expect(ruleIds(messages)).not.toContain('css/no-invalid-at-rules');
+    expect(messages.some((message) => message.fatal)).toBe(false);
+  });
+
+  it('still reports at-rules that are genuinely unknown', async () => {
+    expect(ruleIds(lint('.a { @applyy flex; }', await css({ tailwind: TAILWIND }), 'a.css')))
+      .toContain('css/no-invalid-at-rules');
+  });
+
   it('carries the tailwind settings and rule tweaks onto the css block', async () => {
     const config = await css({ tailwind: { ...TAILWIND, ignoreClasses: ['^swiper-'] } });
     const settings = cssBlock(config)?.settings as { 'better-tailwindcss': Record<string, unknown> };
@@ -121,12 +138,12 @@ describe('css preset', () => {
   });
 
   it('picks the tailwind 3 syntax when asked', async () => {
-    const { tailwind3, tailwind4 } = await import('tailwind-csstree');
+    const v3 = await css({ tailwind: { ...TAILWIND, version: 3 } });
+    const v4 = await css({ tailwind: TAILWIND });
 
-    const syntaxOf = (config: Awaited<ReturnType<typeof css>>) =>
-      (cssBlock(config)?.languageOptions as Record<string, unknown>).customSyntax;
-
-    expect(syntaxOf(await css({ tailwind: { ...TAILWIND, version: 3 } }))).toBe(tailwind3);
-    expect(syntaxOf(await css({ tailwind: TAILWIND }))).toBe(tailwind4);
+    expect(ruleIds(lint('@tailwind base;', v3, 'a.css'))).not.toContain('css/no-invalid-at-rules');
+    expect(ruleIds(lint('@tailwind base;', v4, 'a.css'))).toContain('css/no-invalid-at-rules');
+    expect(ruleIds(lint('.a { @apply text-[52px]/[1.05] hover:opacity-50 !important; }', v3, 'a.css')))
+      .not.toContain('css/no-invalid-at-rules');
   });
 });

@@ -1,4 +1,5 @@
 import type { Linter } from 'eslint';
+import type { tailwind4 } from 'tailwind-csstree';
 
 import { JS_TS_FILES } from '../files.js';
 import { entwicoPlugin } from '../plugin.js';
@@ -74,6 +75,27 @@ export async function tailwind(options: TailwindOptions): Promise<FlatConfigArra
   ];
 }
 
+type CsstreeSyntaxExtension = typeof tailwind4;
+
+/**
+ * The stock `@apply` prelude grammar rejects real classes (`text-[52px]/[1.05]`,
+ * `text-(--brand)`); better-tailwindcss already validates them on the same node,
+ * so accept any prelude.
+ */
+function relaxApplyPrelude(base: CsstreeSyntaxExtension): CsstreeSyntaxExtension {
+  return (prev) => {
+    const config = base(prev);
+
+    return {
+      ...config,
+      atrules: {
+        ...config.atrules,
+        apply: { prelude: '<any-value>' },
+      },
+    };
+  };
+}
+
 /**
  * The parts of the Tailwind setup that are language-agnostic, so the `css`
  * preset can layer them onto its own block: `@apply` is the one place outside
@@ -126,6 +148,6 @@ export async function tailwindCssContribution(options: TailwindOptions): Promise
       }),
     },
 
-    syntax: version === 3 ? tailwind3 : tailwind4,
+    syntax: relaxApplyPrelude(version === 3 ? tailwind3 : tailwind4),
   };
 }

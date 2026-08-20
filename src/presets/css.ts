@@ -8,12 +8,6 @@ export type CssOptions = {
   files?: string[] | undefined;
 
   /**
-   * Baseline bar for `css/use-baseline`. `false` turns the rule off.
-   * @default 'newly'
-   */
-  baseline?: 'widely' | 'newly' | false | undefined;
-
-  /**
    * Tailwind options, when the project has them. Swaps in a Tailwind-aware
    * csstree syntax and lints the classes inside `@apply`.
    */
@@ -27,7 +21,7 @@ export type CssOptions = {
  * costs ~47ms, which a project without stylesheets should not pay.
  */
 export async function css(options: CssOptions = {}): Promise<FlatConfigArray> {
-  const { files = ['**/*.css'], baseline = 'newly', tailwind: tailwindOptions } = options;
+  const { files = ['**/*.css'], tailwind: tailwindOptions } = options;
 
   const { default: cssPlugin } = await import('@eslint/css');
   const tailwindBits = tailwindOptions ? await tailwindCssContribution(tailwindOptions) : undefined;
@@ -52,7 +46,9 @@ export async function css(options: CssOptions = {}): Promise<FlatConfigArray> {
         // --radix-accordion-content-height etc are unknown
         'css/no-invalid-properties': ['error', { allowUnknownVariables: true }],
 
-        'css/use-baseline': baseline === false ? 'off' : ['error', { available: baseline }],
+        // the rule is blind fire-and-forget and cannot see -webkit- fallbacks
+        // that fix the problems
+        'css/use-baseline': 'off',
 
         ...tailwindBits?.rules,
       },
