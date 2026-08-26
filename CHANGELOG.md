@@ -1,5 +1,14 @@
 # @entwico/eslint-config
 
+## 4.1.0
+
+### Minor Changes
+
+- 0dba173: new `@entwico/astro-no-class-list` rule: Astro's `class:list` directive is reported when `tailwind` is enabled — use `class` with `cn()` instead
+- 384ad6a: `@astroscope/eslint-plugin` v2: the astro preset now includes `@astroscope/no-server-action-calls`; the i18n set drops `prefer-x-directives` (its directives no longer exist in `@astroscope/i18n@2`)
+- 384ad6a: the astro preset auto-enables the `@astroscope/wormhole` ruleset when the dep is present (override via `astro: { wormhole: false }`)
+- 384ad6a: dependency refresh: unicorn v73 (new `no-unsafe-sqlite-interpolation` rule), eslint-plugin-astro 3.1, typescript-eslint 8.68, @eslint-react 5.18.6
+
 ## 4.0.1
 
 ### Patch Changes
