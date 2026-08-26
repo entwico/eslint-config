@@ -17,6 +17,9 @@ export type AstroOptions = {
   /** Enable @astroscope/i18n rules. Pass an object to extend ignored attributes. */
   i18n?: boolean | AstroI18nOptions | undefined;
 
+  /** Enable @astroscope/wormhole rules. */
+  wormhole?: boolean | undefined;
+
   /**
    * tsconfig path(s) for type-aware rules on `.astro`. Defaults to `projectService: true`
    * (via @entwico/astro-eslint-parser, which shares one tsserver project with .ts/.tsx).
@@ -30,11 +33,11 @@ export type AstroOptions = {
  * Async so the Astro plugin graph (incl. the forked parser) is only loaded by projects that enable it.
  */
 export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray> {
-  const { i18n = false, tsconfigProject } = options;
+  const { i18n = false, wormhole = false, tsconfigProject } = options;
   const i18nEnabled = i18n !== false;
 
   const [
-    { default: astroscopePlugin, DEFAULT_IGNORE_ATTRIBUTES, i18nPlugin },
+    { default: astroscopePlugin, DEFAULT_IGNORE_ATTRIBUTES, i18nPlugin, wormholePlugin },
     astroEslintParser,
     { default: tsParser },
     { default: eslintPluginAstro },
@@ -49,6 +52,7 @@ export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray
 
   const astroscopeRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.recommended);
   const i18nRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.i18n);
+  const wormholeRecommendedRules = mergeConfigRules((astroscopePlugin as PluginConfigs).configs?.wormhole);
   const i18nIgnoreAttributes = typeof i18n === 'object' ? (i18n.ignoreAttributes ?? []) : [];
   const astroParserOptions =
     tsconfigProject === undefined ? { projectService: true } : { project: tsconfigProject };
@@ -116,6 +120,14 @@ export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray
       },
     },
   ];
+
+  if (wormhole) {
+    configs.push({
+      files: JS_TS_FILES,
+      plugins: { '@astroscope/wormhole': wormholePlugin as never },
+      rules: wormholeRecommendedRules,
+    });
+  }
 
   if (i18nEnabled) {
     configs.push({

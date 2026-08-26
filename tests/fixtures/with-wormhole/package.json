@@ -1,0 +1,7 @@
+{
+  "name": "fixture-with-wormhole",
+  "private": true,
+  "dependencies": {
+    "@astroscope/wormhole": "^2.0.0"
+  }
+}

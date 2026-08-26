@@ -98,7 +98,6 @@ function adjustTailwindSyntax(base: CsstreeSyntaxExtension): CsstreeSyntaxExtens
         utility: {
           parse: {
             block(this: { Block: (isStyleBlock: boolean, options: { allowNestedRules: boolean }) => unknown }) {
-              // eslint-disable-next-line unicorn/no-this-outside-of-class -- csstree parser context method
               return this.Block(true, { allowNestedRules: true });
             },
           },

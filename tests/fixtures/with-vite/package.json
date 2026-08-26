@@ -2,6 +2,6 @@
   "name": "fixture-with-vite",
   "private": true,
   "devDependencies": {
-    "vite": "^8.0.10"
+    "vite": "^8.2.2"
   }
 }

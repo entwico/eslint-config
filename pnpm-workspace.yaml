@@ -12,7 +12,3 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
-
-peerDependencyRules:
-  allowedVersions:
-    'tsconfck>typescript': '6' # demo deps are on ts 6; tsconfck only parses tsconfig files

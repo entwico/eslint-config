@@ -39,7 +39,6 @@ describe('json preset', () => {
 
   it('treats .vscode/settings.json as JSONC', async () => {
     const messages = lint('{ "a": 1 /* trailing */ }', (await json()), '/abs/path/.vscode/settings.json');
-    // JSONC allows comments — should not be a parse error
     expect(messages.some((m) => m.fatal)).toBe(false);
   });
 

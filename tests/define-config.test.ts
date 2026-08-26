@@ -83,6 +83,24 @@ describe('defineConfig', () => {
     expect(configHasPlugin(config, '@astroscope/i18n')).toBe(true);
   });
 
+  it('does not include astroscope/wormhole plugin when @astroscope/wormhole is absent', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'plain'), astro: true });
+    expect(configHasPlugin(config, '@astroscope/wormhole')).toBe(false);
+  });
+
+  it('auto-includes astroscope/wormhole plugin when @astroscope/wormhole is in deps', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'with-wormhole'), astro: true });
+    expect(configHasPlugin(config, '@astroscope/wormhole')).toBe(true);
+    expect(configHasRule(config, '@astroscope/wormhole/wormholes-static-access')).toBe(true);
+    expect(configHasRule(config, '@astroscope/wormhole/server-readonly')).toBe(true);
+    expect(configHasRule(config, '@astroscope/wormhole/no-use-wormhole-in-astro')).toBe(true);
+  });
+
+  it('lets explicit wormhole: false override auto-detection', async () => {
+    const config = await defineConfig({ root: join(FIXTURES, 'with-wormhole'), astro: { wormhole: false } });
+    expect(configHasPlugin(config, '@astroscope/wormhole')).toBe(false);
+  });
+
   it('always includes astroscope core plugin when astro: true', async () => {
     const config = await defineConfig({ root: join(FIXTURES, 'plain'), astro: true });
     expect(configHasPlugin(config, '@astroscope')).toBe(true);

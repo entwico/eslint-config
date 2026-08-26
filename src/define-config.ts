@@ -25,8 +25,8 @@ export type DefineConfigOptions = {
     }
     | undefined;
 
-  /** Enable Astro rules. Auto-detects `@astroscope/i18n` for i18n rules. */
-  astro?: boolean | { i18n?: boolean | { ignoreAttributes?: string[] } } | undefined;
+  /** Enable Astro rules. Auto-detects `@astroscope/i18n` and `@astroscope/wormhole` for their rule sets. */
+  astro?: boolean | { i18n?: boolean | { ignoreAttributes?: string[] }; wormhole?: boolean } | undefined;
 
   /** Enable Tailwind rules. */
   tailwind?: TailwindOptions | undefined;
@@ -105,6 +105,7 @@ export async function defineConfig(options: DefineConfigOptions): Promise<FlatCo
     enableAstro
       ? astro({
           i18n: deps.has('@astroscope/i18n'),
+          wormhole: deps.has('@astroscope/wormhole'),
           ...(tsconfigProject !== undefined && { tsconfigProject }),
           ...astroOpts,
         })

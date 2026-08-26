@@ -9,21 +9,21 @@
     "typecheck": "astro check"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.4",
-    "astro": "^6.2.1",
+    "@astrojs/react": "^6.0.4",
+    "astro": "^7.2.6",
     "clsx": "^2.1.1",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "tailwind-merge": "^3.5.0"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
+    "@astrojs/check": "^0.9.10",
     "@entwico/eslint-config": "workspace:*",
-    "@tailwindcss/vite": "^4.2.4",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "eslint": "^9.27.0",
-    "tailwindcss": "^4.2.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "eslint": "^10.9.1",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   }
 }

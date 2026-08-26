@@ -128,6 +128,9 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // process.exit is idiomatic in node servers/CLIs (shutdown handlers)
         'unicorn/no-process-exit': 'off',
+
+        // forbids single-line jsdoc (`/** … */` on one line), which is idiomatic for brief docs
+        'unicorn/single-line-block-comment-style': 'off',
       },
     },
 

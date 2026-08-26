@@ -60,7 +60,6 @@ describe('imports preset', () => {
   });
 
   it('does not enforce blank lines between groups', () => {
-    // tightly packed (no blanks) is acceptable
     const code = [
       'import path from \'node:path\';',
       'import { useState } from \'react\';',
