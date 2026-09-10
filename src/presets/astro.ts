@@ -1,4 +1,5 @@
 import { JS_TS_FILES } from '../files.js';
+import { entwicoPlugin } from '../plugin.js';
 import type { FlatConfig, FlatConfigArray } from '../types.js';
 import { loadA11y } from '../utils/a11y.js';
 
@@ -117,6 +118,15 @@ export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray
       files: ['**/*.astro'],
       rules: {
         'unicorn/prefer-module': 'off',
+      },
+    },
+
+    {
+      // the rule itself skips routes under `pages/` (a bare frontmatter `return` throws there)
+      files: ['**/*.astro'],
+      plugins: { '@entwico': entwicoPlugin },
+      rules: {
+        '@entwico/astro-prefer-early-return': 'error',
       },
     },
   ];

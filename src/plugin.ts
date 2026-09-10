@@ -1,4 +1,5 @@
 import { astroNoClassList } from './rules/astro-no-class-list.js';
+import { astroPreferEarlyReturn } from './rules/astro-prefer-early-return.js';
 import { noBidiCharacters } from './rules/no-bidi-characters.js';
 import { noInlineStyle } from './rules/no-inline-style.js';
 import { noReexport } from './rules/no-reexport.js';
@@ -20,6 +21,7 @@ export const entwicoPlugin = {
     'space-before-comment': spaceBeforeComment,
     'no-bidi-characters': noBidiCharacters,
     'astro-no-class-list': astroNoClassList,
+    'astro-prefer-early-return': astroPreferEarlyReturn,
     'no-inline-style': noInlineStyle,
     'no-reexport': noReexport,
     'no-style-tag': noStyleTag,
