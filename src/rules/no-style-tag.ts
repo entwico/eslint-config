@@ -43,7 +43,6 @@ export const noStyleTag: Rule.RuleModule = {
           return;
         }
 
-        // `define:vars` is Astro's bridge for values a class cannot carry — no class replaces it
         const attributes = (node.attributes ?? []) as AnyNode[];
 
         if (attributes.some((attribute) => attributeName(attribute) === 'define:vars')) {

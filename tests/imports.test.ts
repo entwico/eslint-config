@@ -20,7 +20,6 @@ describe('imports preset', () => {
       'import { cn } from \'@/lib/cn.js\';',
     ].join('\n');
     const messages = lint(code, imports(), 'a.tsx');
-    // @/ should come BEFORE ../parent — so this order is wrong
     expect(ruleIds(messages)).toContain('import-x/order');
   });
 

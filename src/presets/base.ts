@@ -89,7 +89,7 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
         // conflicts with PascalCase React/Astro component files
         'unicorn/filename-case': 'off',
 
-        // React refs and many DOM APIs legitimately use null
+        // react refs and many DOM APIs legitimately use null
         'unicorn/no-null': 'off',
 
         // reduce/forEach are legitimate idioms — the rest of the `prefer-*` family already covers the wins

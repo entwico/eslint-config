@@ -54,7 +54,6 @@ export const noReexport: Rule.RuleModule = {
           continue;
         }
 
-        // the name to import at the source, which a rename made differ from the local one
         const name = specifier.type === 'ImportSpecifier'
           ? ((specifier.imported.name ?? specifier.imported.value) as string)
           : (specifier.local.name as string);

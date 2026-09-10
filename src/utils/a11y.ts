@@ -148,7 +148,6 @@ const wrapA11yRule = (baseRule: Rule.RuleModule): Rule.RuleModule => ({
   create(context) {
     const listener = baseRule.create(bridgeSettings(context));
 
-    // outside astro templates the base rule runs untouched
     if (context.sourceCode.parserServices?.isAstro !== true) {
       return listener;
     }
