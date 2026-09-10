@@ -1,5 +1,12 @@
 # @entwico/eslint-config
 
+## 4.2.0
+
+### Minor Changes
+
+- 09ab90b: new `@entwico/astro-prefer-early-return` rule
+- c1ccf1e: dependency refresh: @astroscope/eslint-plugin 2.1 (new `@astroscope/wormhole/no-registry-import` rule), typescript-eslint 8.70, @eslint-react 5.19, tailwind-csstree 0.4
+
 ## 4.1.0
 
 ### Minor Changes
