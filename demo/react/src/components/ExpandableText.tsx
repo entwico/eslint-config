@@ -1,6 +1,5 @@
+import { cn } from '@entwico/dash/cn';
 import { type FunctionComponent, type PropsWithChildren, useEffect, useId, useRef, useState } from 'react';
-
-import { cn } from '@/lib/cn.js';
 
 export type ExpandableTextProps = PropsWithChildren<{
   readonly maxLines: number;

@@ -11,16 +11,64 @@ const TYPE_AWARE_IGNORES = ['**/*.astro/**'];
 
 // canonical list from create-react-app's `confusing-browser-globals`
 const CONFUSING_BROWSER_GLOBALS = [
-  'addEventListener', 'blur', 'close', 'closed', 'confirm', 'defaultStatus',
-  'defaultstatus', 'event', 'external', 'find', 'focus', 'frameElement',
-  'frames', 'history', 'innerHeight', 'innerWidth', 'length', 'location',
-  'locationbar', 'menubar', 'moveBy', 'moveTo', 'name', 'onblur', 'onerror',
-  'onfocus', 'onload', 'onresize', 'onunload', 'open', 'opener', 'opera',
-  'outerHeight', 'outerWidth', 'pageXOffset', 'pageYOffset', 'parent', 'print',
-  'removeEventListener', 'resizeBy', 'resizeTo', 'screen', 'screenLeft',
-  'screenTop', 'screenX', 'screenY', 'scroll', 'scrollbars', 'scrollBy',
-  'scrollTo', 'scrollX', 'scrollY', 'self', 'status', 'statusbar', 'stop',
-  'toolbar', 'top',
+  'addEventListener',
+  'blur',
+  'close',
+  'closed',
+  'confirm',
+  'defaultStatus',
+  'defaultstatus',
+  'event',
+  'external',
+  'find',
+  'focus',
+  'frameElement',
+  'frames',
+  'history',
+  'innerHeight',
+  'innerWidth',
+  'length',
+  'location',
+  'locationbar',
+  'menubar',
+  'moveBy',
+  'moveTo',
+  'name',
+  'onblur',
+  'onerror',
+  'onfocus',
+  'onload',
+  'onresize',
+  'onunload',
+  'open',
+  'opener',
+  'opera',
+  'outerHeight',
+  'outerWidth',
+  'pageXOffset',
+  'pageYOffset',
+  'parent',
+  'print',
+  'removeEventListener',
+  'resizeBy',
+  'resizeTo',
+  'screen',
+  'screenLeft',
+  'screenTop',
+  'screenX',
+  'screenY',
+  'scroll',
+  'scrollbars',
+  'scrollBy',
+  'scrollTo',
+  'scrollX',
+  'scrollY',
+  'self',
+  'status',
+  'statusbar',
+  'stop',
+  'toolbar',
+  'top',
 ];
 
 export type BaseOptions = {
@@ -131,6 +179,21 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // forbids single-line jsdoc (`/** … */` on one line), which is idiomatic for brief docs
         'unicorn/single-line-block-comment-style': 'off',
+
+        // forbids the ` * ` continuation prefix of standard multi-line jsdoc
+        'unicorn/no-asterisk-prefix-in-documentation-comments': 'off',
+
+        // rewrites guard clauses (`if (x) { return a; } return b;`) into ternaries
+        'unicorn/prefer-ternary': 'off',
+
+        // guards for distinct conditions read better as separate early exits
+        'unicorn/prefer-combined-guards': 'off',
+
+        // flags generic helper parameters that merely receive one value at today's call sites
+        'unicorn/no-unnecessary-parameters': 'off',
+
+        // not type-aware: suggests a destructuring default for `x ?? y` even when `x` can be null
+        'unicorn/prefer-default-parameters': 'off',
       },
     },
 

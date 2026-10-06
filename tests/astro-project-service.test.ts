@@ -96,8 +96,8 @@ describe('astro project service integration', () => {
       expect(ruleIds).toContain('@astroscope/island-not-serializable');
 
       // the stock parser downgrades `projectService` to `project: true` with a console.warn
-      const parserWarnings = warn.mock.calls.filter((call) =>
-        String(call[0]).includes('does not support the `projectService`'),
+      const parserWarnings = warn.mock.calls.filter(
+        (call) => String(call[0]).includes('does not support the `projectService`'),
       );
 
       expect(parserWarnings).toEqual([]);

@@ -1,6 +1,5 @@
+import { cn } from '@entwico/dash/cn';
 import type { FunctionComponent, PropsWithChildren } from 'react';
-
-import { cn } from '../lib/cn.js';
 
 export type CardProps = PropsWithChildren<{
   readonly title: string;

@@ -11,5 +11,15 @@
   "eslint.workingDirectories": [
     { "mode": "auto" }
   ],
-  "eslint.run": "onType"
+  "eslint.run": "onType",
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list",
+    "[A-Za-z]+ClassName"
+  ],
+  "tailwindCSS.classFunctions": [
+    "cn"
+  ]
 }

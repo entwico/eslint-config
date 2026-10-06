@@ -1,6 +1,5 @@
+import { cn } from '@entwico/dash/cn';
 import { type FunctionComponent, useState } from 'react';
-
-import { cn } from '../lib/cn.js';
 
 export type CounterProps = {
   readonly initial?: number | undefined;

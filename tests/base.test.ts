@@ -93,8 +93,8 @@ describe('base preset', () => {
 
   it('uses projectService for type-aware rules by default', () => {
     const config = base({ root: ROOT });
-    const typeAwareBlock = config.find((c) =>
-      Array.isArray(c.files) && c.files.includes('**/*.{ts,tsx}'),
+    const typeAwareBlock = config.find(
+      (c) => Array.isArray(c.files) && c.files.includes('**/*.{ts,tsx}'),
     );
     const parserOptions = typeAwareBlock?.languageOptions?.parserOptions as
       | { projectService?: boolean; project?: unknown }
@@ -117,8 +117,8 @@ describe('base preset', () => {
       root: ROOT,
       tsconfigProject: ['./tsconfig.app.json', './tsconfig.node.json'],
     });
-    const typeAwareBlock = config.find((c) =>
-      Array.isArray(c.files) && c.files.includes('**/*.{ts,tsx}'),
+    const typeAwareBlock = config.find(
+      (c) => Array.isArray(c.files) && c.files.includes('**/*.{ts,tsx}'),
     );
     const parserOptions = typeAwareBlock?.languageOptions?.parserOptions as
       | { projectService?: boolean; project?: unknown }
