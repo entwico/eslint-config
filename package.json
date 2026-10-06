@@ -1,6 +1,6 @@
 {
   "name": "@entwico/eslint-config",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "description": "Shared ESLint flat config (TS, React, Astro, Tailwind)",
   "type": "module",
   "packageManager": "pnpm@12.9.1",

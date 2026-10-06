@@ -1,5 +1,20 @@
 # @entwico/eslint-config
 
+## 5.0.0
+
+### Major Changes
+
+- aa9e834: `@stylistic/list-style` is now enforced (stylistic 6.0.0-beta.6): a multiline list puts every item on its own line, and a call whose arguments open on the same line closes on the same line
+- aa9e834: unicorn v77: new correctness rules such as `no-unnecessary-array-flat-map` and `no-unused-builtin-method-return`; `prefer-early-return` and `prefer-continue` catch more cases; `prefer-ternary`, `prefer-default-parameters`, `prefer-combined-guards`, `no-unnecessary-parameters` and `no-asterisk-prefix-in-documentation-comments` are off
+
+### Minor Changes
+
+- aa9e834: dependency refresh: @eslint/css 2, @eslint-react 5.24, eslint-plugin-astro 3.2, typescript-eslint 8.71, @astroscope/eslint-plugin 2.1.1
+
+### Patch Changes
+
+- 4933d1b: update eslint-plugin-better-tailwindcss to 4.8.0 for faster Tailwind class linting
+
 ## 4.2.0
 
 ### Minor Changes
