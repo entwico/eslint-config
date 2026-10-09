@@ -194,6 +194,9 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // not type-aware: suggests a destructuring default for `x ?? y` even when `x` can be null
         'unicorn/prefer-default-parameters': 'off',
+
+        // `getElementById(id)` with a variable is the id lookup itself; `querySelector` would need `CSS.escape`
+        'unicorn/prefer-query-selector': ['error', { allowWithVariables: true }],
       },
     },
 

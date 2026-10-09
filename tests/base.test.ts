@@ -47,6 +47,15 @@ describe('base preset', () => {
     expect(ruleIds(messages)).toContain('prefer-template');
   });
 
+  it('allows getElementById with a variable but still prefers querySelector for literals', () => {
+    const config = withBrowserGlobals(base({ root: ROOT }));
+    const variable = lint('export const find = (id) => document.getElementById(id);', config, 'a.js');
+    const literal = lint('export const find = () => document.getElementById(\'x\');', config, 'a.js');
+
+    expect(ruleIds(variable)).not.toContain('unicorn/prefer-query-selector');
+    expect(ruleIds(literal)).toContain('unicorn/prefer-query-selector');
+  });
+
   it('does not crash on .json files (rules scoped to JS_TS_FILES)', () => {
     const messages = lint('{ "name": "x" }', base({ root: ROOT }), 'package.json');
     expect(messages.filter((m) => m.fatal)).toHaveLength(0);
