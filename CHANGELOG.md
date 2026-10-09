@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 5.0.1
+
+### Patch Changes
+
+- 3c036ed: `unicorn/prefer-query-selector` allows vars
+
 ## 5.0.0
 
 ### Major Changes
