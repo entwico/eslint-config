@@ -1,5 +1,15 @@
 # @entwico/eslint-config
 
+## 6.0.0
+
+### Major Changes
+
+- d2c5523: `@astroscope/eslint-plugin` 2.2: the astro preset enforces the new auto-fixable `no-astro-define-action` rule, which requires `defineAction` from `@astroscope/node/guards` — Astro projects need `@astroscope/node` 4
+
+### Patch Changes
+
+- d2c5523: `@astroscope/i18n/t-static-meta` also reports a `t()` fallback or description written as a tagged template
+
 ## 5.0.1
 
 ### Patch Changes
