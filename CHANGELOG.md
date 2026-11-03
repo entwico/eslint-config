@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 7.0.0
+
+### Major Changes
+
+- 5f9ec04: update to @astroscope/eslint-plugin 3
+
 ## 6.0.0
 
 ### Major Changes
