@@ -1,5 +1,17 @@
 # @entwico/eslint-config
 
+## 8.0.0
+
+### Major Changes
+
+- 754dd45: `@astroscope/eslint-plugin` 3.1: the astro preset enforces `no-frontmatter-only-page`, and the i18n ruleset adds `rich-message-components`, `t-message-values` and `t-valid-message`
+- 754dd45: unicorn v80: `prefer-options-parameter`, `prefer-regexp-exec` and `require-spread-parentheses` are enforced
+
+### Patch Changes
+
+- 754dd45: update `@eslint-react/eslint-plugin` to 5.30, `eslint-plugin-better-tailwindcss` to 4.11, `typescript-eslint` to 8.72 and the remaining plugins to their latest minor
+- 754dd45: update `@stylistic/eslint-plugin` to 6.0.1: `indent` now checks `satisfies` expressions, so a ternary branch ending in `} satisfies T` gets the same indentation as one ending in `as T` (auto-fixable), and `max-statements-per-line` can auto-fix
+
 ## 7.0.0
 
 ### Major Changes
