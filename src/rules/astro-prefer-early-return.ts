@@ -171,10 +171,7 @@ function shiftIndent(node: AnyNode, text: string, targetColumn: number): string 
  * the `&&` / `?: null` it replaces — so the autofix is output-identical.
  *
  * Pages are the exception: Astro requires a page's frontmatter to return a
- * `Response` if it returns at all, so routes under `pages/` are skipped —
- * `_`-prefixed files and folders there are components and still get the rule.
- * Only the shape where the guard is the sole template root qualifies —
- * a sibling `<script>` or a second expression would change what renders.
+ * `Response` if it returns at all, so routes under `pages/` are skipped.
  */
 export const astroPreferEarlyReturn: Rule.RuleModule = {
   meta: {

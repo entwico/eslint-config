@@ -21,9 +21,6 @@ function attributeName(attribute: AnyNode): string {
  * some of the time, and no heuristic separates those from CSS that should have been
  * classes. The escape hatch is an `eslint-disable-next-line` on the block, which is
  * why this reports the opening tag rather than the whole element.
- *
- * The one built-in exemption is `define:vars`, which exists precisely to carry values
- * a static class cannot — there is nothing to rewrite it into.
  */
 export const noStyleTag: Rule.RuleModule = {
   meta: {

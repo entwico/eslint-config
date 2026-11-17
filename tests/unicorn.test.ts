@@ -48,7 +48,7 @@ describe('base preset: unicorn rules', () => {
     expect(ruleIds(messages)).toContain('unicorn/no-invalid-remove-event-listener');
   });
 
-  it('does NOT flag `props` / `e` / `ref` (prevent-abbreviations is off)', () => {
+  it('does NOT flag `props` / `e` / `ref` (name-replacements is off)', () => {
     const code = [
       'export function f(props) {',
       '  const e = props.e;',
@@ -56,7 +56,7 @@ describe('base preset: unicorn rules', () => {
       '}',
     ].join('\n');
     const messages = lint(code, base({ root: ROOT }), 'a.js');
-    expect(ruleIds(messages)).not.toContain('unicorn/prevent-abbreviations');
+    expect(ruleIds(messages)).not.toContain('unicorn/name-replacements');
   });
 
   it('does NOT flag PascalCase component filenames (filename-case is off)', () => {
@@ -78,7 +78,7 @@ describe('base preset: unicorn rules', () => {
     ].join('\n');
     const messages = lint(code, base({ root: ROOT }), 'a.js');
     expect(ruleIds(messages)).not.toContain('unicorn/no-array-reduce');
-    expect(ruleIds(messages)).not.toContain('unicorn/no-array-for-each');
+    expect(ruleIds(messages)).not.toContain('unicorn/no-for-each');
   });
 
   it('does not run unicorn rules on .json files (scoped to JS_TS_FILES)', () => {

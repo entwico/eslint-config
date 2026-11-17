@@ -100,9 +100,6 @@ function findUnsafe(pattern: AST.Pattern, report: Report): void {
  * ambiguity analysis: overlapping alternations such as `(a|ab)+` are not detected. Projects
  * that want the thorough version should add `eslint-plugin-regexp` and its
  * `no-super-linear-backtracking`, which does the full analysis via `refa`.
- *
- * Covers regex literals and `new RegExp('...')` / `RegExp('...')` built from a string
- * literal; a pattern assembled at runtime has nothing to analyse statically.
  */
 export const noUnsafeRegex: Rule.RuleModule = {
   meta: {
@@ -131,7 +128,6 @@ export const noUnsafeRegex: Rule.RuleModule = {
           unicodeSets: flags.includes('v'),
         });
       } catch {
-        // an unparseable pattern is `no-invalid-regexp`'s business, not ours
         return;
       }
 

@@ -8,17 +8,14 @@ export type StylisticOptions = {
   /** Indentation size in spaces. */
   indent?: number | undefined;
 
-  /** Quote style. */
   quotes?: 'single' | 'double' | undefined;
 
-  /** Require semicolons. */
   semi?: boolean | undefined;
 
-  /** Trailing comma policy. */
   commaDangle?: 'never' | 'always' | 'always-multiline' | 'only-multiline' | undefined;
 };
 
-/** Formatting rules. */
+/** Prettier-equivalent formatting via @stylistic. */
 export function stylistic(options: StylisticOptions = {}): FlatConfigArray {
   const {
     indent = 2,

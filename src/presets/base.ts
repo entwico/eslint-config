@@ -197,6 +197,9 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
 
         // `getElementById(id)` with a variable is the id lookup itself; `querySelector` would need `CSS.escape`
         'unicorn/prefer-query-selector': ['error', { allowWithVariables: true }],
+
+        // module-level `type Options = …` next to the code using it is idiomatic; only values get scoped
+        'unicorn/prefer-smaller-scope': ['error', { checkTypeAliases: false }],
       },
     },
 
@@ -229,7 +232,7 @@ export function base({ root, tsconfigProject }: BaseOptions): FlatConfigArray {
       },
     },
 
-    // port from `eslint-plugin-security`, plus the eval family
+    // security: trojan source, redos and the eval family
     {
       files: JS_TS_FILES,
       plugins: { '@entwico': entwicoPlugin },

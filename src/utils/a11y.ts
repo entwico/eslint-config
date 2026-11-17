@@ -9,7 +9,7 @@ type A11yBasePlugin = {
 };
 
 export type A11yBundle = {
-  /** wrapped plugin; the react and astro presets both register it as `jsx-a11y` */
+  /** Wrapped plugin; the react and astro presets both register it as `jsx-a11y`. */
   plugin: ESLint.Plugin;
   recommendedRules: Linter.RulesRecord;
   strictRules: Linter.RulesRecord;

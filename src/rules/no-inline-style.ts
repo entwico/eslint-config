@@ -69,10 +69,6 @@ function arbitraryProperty(name: string, value: AnyNode): string | undefined {
 
 /**
  * Forbid statically-valued inline styles in favour of Tailwind classes.
- *
- * Only fires on values a class could have expressed — computed values, spreads and
- * CSS custom properties (the sanctioned way to pass dynamic values into Tailwind)
- * are left alone, so the rule never blocks genuinely dynamic styling.
  */
 export const noInlineStyle: Rule.RuleModule = {
   meta: {

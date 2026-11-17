@@ -4,7 +4,6 @@ import type { FlatConfigArray } from '../../src/types.js';
 
 const linter = new Linter({ configType: 'flat' });
 
-/** Run ESLint against code text and return all messages. */
 export function lint(code: string, config: FlatConfigArray, filename: string): Linter.LintMessage[] {
   return linter.verify(code, config, filename);
 }
