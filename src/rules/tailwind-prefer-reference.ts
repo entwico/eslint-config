@@ -24,13 +24,6 @@ function referencePath(filename: string, entryPoint: string, root: string): stri
  * Stylesheets that style raw but cannot resolve `@apply` should `@reference`
  * the Tailwind entry — that is what lets `@entwico/tailwind-prefer-apply`
  * (and the design-system tokens) reach them.
- *
- * Files the entry `@import`s are exempt: `@apply` already resolves there, and
- * `@reference`-ing the file that imports them fails the build with a recursion
- * error. Reports once per file, so a stylesheet that genuinely loads outside
- * the Tailwind pipeline is excused with a single file-level `eslint-disable`.
- * Files with nothing a class could express (keyframes, token definitions,
- * import aggregators) are never reported.
  */
 export const tailwindPreferReference: Rule.RuleModule = {
   meta: {

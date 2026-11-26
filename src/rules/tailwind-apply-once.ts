@@ -7,11 +7,8 @@ function isApply(node: CssNode | undefined): boolean {
 }
 
 /**
- * One `@apply` per block. Consecutive `@apply` runs merge automatically —
- * concatenating preludes in order is output-identical. An `@apply` separated
- * from the previous one by other declarations is still reported but not
- * fixed: `@apply` inlines its declarations at its position, so hoisting it
- * past a declaration could change the cascade.
+ * One `@apply` per block. `@apply` inlines its declarations at its position,
+ * so hoisting it past a declaration could change the cascade.
  */
 export const tailwindApplyOnce: Rule.RuleModule = {
   meta: {

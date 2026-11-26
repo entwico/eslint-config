@@ -116,8 +116,7 @@ export const noUnsafeRegex: Rule.RuleModule = {
 
     /**
      * `patternStart` is the source index the pattern text begins at, or null when the two
-     * cannot be mapped. Given it, reports point at the offending sub-expression instead of
-     * the whole literal.
+     * cannot be mapped.
      */
     function check(pattern: string, flags: string, node: ESTree.Node, patternStart: number | null): void {
       let ast: AST.Pattern;

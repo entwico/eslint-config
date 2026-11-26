@@ -38,7 +38,7 @@ export async function react(options: ReactOptions = {}): Promise<FlatConfigArray
   // throw on them, so exclude them (mirrors base's TYPE_AWARE_IGNORES).
   const ASTRO_VIRTUAL_FILES = '**/*.astro/**';
 
-  // eslint-react presets ship as flat-config object(s); normalize to an array and scope to our files.
+  // eslint-react presets ship as flat-config object(s)
   const scopeToFiles = (preset: FlatConfig | FlatConfig[]): FlatConfig[] =>
     [preset].flat().map((config) => ({
       ...config,

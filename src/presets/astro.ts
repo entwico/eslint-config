@@ -114,7 +114,7 @@ export async function astro(options: AstroOptions = {}): Promise<FlatConfigArray
 
     {
       // in .astro, a bare top-level `return` in frontmatter is the `Astro.rewrite`/early-`Response`
-      // idiom; `unicorn/prefer-module` misfires on it. disable for .astro only; keep it on .ts/.js.
+      // idiom; `unicorn/prefer-module` misfires on it
       files: ['**/*.astro'],
       rules: {
         'unicorn/prefer-module': 'off',

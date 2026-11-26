@@ -5,7 +5,6 @@ import type { Rule } from 'eslint';
  *
  * Fills a gap left by `@stylistic/spaced-comment`, which only governs the space
  * after the `//`/`/*` marker — not the gap between preceding code and the comment.
- * Full-line comments (no code before them on the line) are left untouched.
  */
 export const spaceBeforeComment: Rule.RuleModule = {
   meta: {

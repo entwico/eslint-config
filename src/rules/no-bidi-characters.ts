@@ -48,12 +48,9 @@ type Options = { allowMarks?: boolean | undefined };
  * Disallow raw Unicode bidirectional control characters in source.
  *
  * A Trojan Source attack hides code behind a directional override: the file renders as one
- * thing everywhere a human looks at it, and compiles as another. Escaped forms are
- * deliberately untouched — an escape is visible to the reader, which is the whole point, so
- * escaping is the fix rather than deletion.
+ * thing everywhere a human looks at it, and compiles as another.
  *
- * Scans the raw file text rather than tokens, so comments, string content, identifiers and
- * JSX/Astro template text are all covered, and the rule does not depend on the parser
+ * Scans the raw file text rather than tokens, so the rule does not depend on the parser
  * populating `Program.tokens`.
  *
  * No autofix: deleting the character silently changes the rendering of legitimate RTL text,

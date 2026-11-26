@@ -24,11 +24,6 @@ function arbitraryProperty(property: string, value: string, important: boolean):
  * Prefer `@apply` over raw declarations in stylesheets where Tailwind is
  * reachable — the entry, `@reference`-d files, and anything the entry
  * `@import`s (Tailwind compiles that tree as one unit).
- *
- * A file outside all of those cannot resolve `@apply`, so raw declarations are
- * its only form and the rule stays silent. Custom properties and descriptor
- * contexts (`@keyframes`, `@font-face`, `@theme`, …) are never reported: no
- * class can express them.
  */
 export const tailwindPreferApply: Rule.RuleModule = {
   meta: {

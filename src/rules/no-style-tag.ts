@@ -19,8 +19,7 @@ function attributeName(attribute: AnyNode): string {
  * Deliberately blunt: everything a `<style>` block can hold — keyframes, media
  * queries, global resets, styling for injected third-party markup — is legitimate
  * some of the time, and no heuristic separates those from CSS that should have been
- * classes. The escape hatch is an `eslint-disable-next-line` on the block, which is
- * why this reports the opening tag rather than the whole element.
+ * classes. The escape hatch is an `eslint-disable-next-line` on the block.
  */
 export const noStyleTag: Rule.RuleModule = {
   meta: {
