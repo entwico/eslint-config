@@ -1,5 +1,11 @@
 # @entwico/eslint-config
 
+## 8.0.1
+
+### Patch Changes
+
+- 547a823: update typescript-eslint to 8.74 and @eslint-react/eslint-plugin to 5.30.6
+
 ## 8.0.0
 
 ### Major Changes
